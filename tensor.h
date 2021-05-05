@@ -1,11 +1,12 @@
 #ifndef TENSOR_H
 #define TENSOR_H
 
-#include <iostream>
-#include <string>
-#include <random>
 #include <math.h>
+
 #include <fstream>
+#include <iostream>
+#include <random>
+#include <string>
 
 #include "dais_exc.h"
 
@@ -15,29 +16,28 @@
 
 using namespace std;
 
-class Tensor
-{
-private:
+class Tensor {
+   private:
+    struct Impl;
+    Impl *pimpl;
 
-    float * data;
+    int col;
+    int row;
+    int dep;
 
-    int c;
-    int r; 
-    int d;
+    void allocate_matrix(size_t row, size_t col, size_t dep);
 
-public:
-
+   public:
     /**
      * Class constructor
      * 
      * Parameter-less class constructor 
      */
-    Tensor()
-    {
-        data = nullptr;
-        this->c = 0;
-        this->r = 0;
-        this->d = 0;
+    Tensor() {
+        pimpl = nullptr;
+        this->col = 0;
+        this->row = 0;
+        this->dep = 0;
     }
 
     /**
@@ -88,7 +88,7 @@ public:
      *      
      * @return the new Tensor
      */
-    Tensor(const Tensor& that);
+    Tensor(const Tensor &that);
 
     /**
      * Operator oveloding -
@@ -125,7 +125,7 @@ public:
      * @return lhs with the result of the operation (lhs is passed by copy, so is a new lhs ;) )
      */
     friend Tensor operator*(Tensor lhs, const Tensor &rhs);
-    
+
     /**
      * Operator oveloding /
      * 
@@ -173,7 +173,7 @@ public:
      * @return lhs with the result of the operation (lhs is passed by copy, so is a new lhs ;) )
      */
     friend Tensor operator*(Tensor lhs, const float &rhs);
-    
+
     /**
      * Operator oveloding / between a Tensor and a constant
      * 
@@ -193,7 +193,7 @@ public:
      * 
      * @return a pointer to the receiver object
      */
-    Tensor & operator=(const Tensor &other);
+    Tensor &operator=(const Tensor &other);
 
     /**
      * Random Initialization
@@ -203,23 +203,23 @@ public:
      * @param mean The mean
      * @param std  Standard deviation
      */
-    void init_random(float mean=1.0, float std=0.0){
-        if(data){
+    void init_random(float mean = 1.0, float std = 0.0) {
+        if (pimpl) {
             float y1;
             float y2;
             float num;
-            for(int i=0;i<r;i++){
-                for(int j=0;j<c;j++){
-                    for(int k=0;k<d;k++){
-                        y1 = ( (float)(rand()) + 1. )/( (float)(RAND_MAX) + 1. );
-                        y2 = ( (float)(rand()) + 1. )/( (float)(RAND_MAX) + 1. );
-                        num = cos(2*PI*y2)*sqrt(-2.*log(y1));
-                        this->operator()(i,j,k)= mean + num*std;
+            for (int i = 0; i < row; i++) {
+                for (int j = 0; j < col; j++) {
+                    for (int k = 0; k < dep; k++) {
+                        y1 = ((float)(rand()) + 1.) / ((float)(RAND_MAX) + 1.);
+                        y2 = ((float)(rand()) + 1.) / ((float)(RAND_MAX) + 1.);
+                        num = cos(2 * PI * y2) * sqrt(-2. * log(y1));
+                        this->operator()(i, j, k) = mean + num * std;
                     }
                 }
-            }    
+            }
 
-        }else{
+        } else {
             throw(tensor_not_initialized());
         }
     }
@@ -234,7 +234,7 @@ public:
      * @param d The depth
      * @param v The initialization value
      */
-    void init(int r, int c, int d, float v=0.0);
+    void init(int r, int c, int d, float v = 0.0);
 
     /**
      * Tensor Clamp
@@ -259,7 +259,7 @@ public:
      * 
      * @param new_max New maximum vale
      */
-    void rescale(float new_max=1.0);
+    void rescale(float new_max = 1.0);
 
     /**
      * Tensor padding
@@ -313,8 +313,7 @@ public:
      * @param axis The axis along which perform the concatenation 
      * @return a new Tensor containing the result of the concatenation
      */
-    Tensor concat(const Tensor &rhs, int axis=0);
-
+    Tensor concat(const Tensor &rhs, int axis = 0);
 
     /** 
      * Convolution 
@@ -352,7 +351,7 @@ public:
      * @return the depth of the tensor
      */
     int depth();
-    
+
     /** 
      * Get minimum 
      * 
@@ -375,10 +374,10 @@ public:
      * showSize
      * shows the dimensions of the tensor
      */
-    void showSize(){
-        cout<<this->rows()<<" "<<this->cols()<<" "<<this->depth()<<endl;
+    void showSize() {
+        cout << this->rows() << " " << this->cols() << " " << this->depth() << endl;
     }
-    
+
     /* IOSTREAM */
 
     /**
@@ -389,7 +388,7 @@ public:
      * The content is shown considering each data( , , k).
      * 
      */
-    friend ostream& operator<< (ostream& stream, const Tensor & obj);
+    friend ostream &operator<<(ostream &stream, const Tensor &obj);
 
     /**
      * Reading from file
