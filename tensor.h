@@ -378,8 +378,6 @@ class Tensor {
         cout << this->rows() << " " << this->cols() << " " << this->depth() << endl;
     }
 
-    /* IOSTREAM */
-
     /**
      * Operator overloading <<
      * 
