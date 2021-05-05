@@ -6,15 +6,22 @@ struct Tensor::Impl {
     float*** matrix_p;
 };
 
-void Tensor::allocate_matrix(size_t row, size_t col, size_t dep) {
+Tensor::Tensor() {
+    pimpl = nullptr;
+    this->col = 0;
+    this->row = 0;
+    this->dep = 0;
+}
+
+void Tensor::allocate_matrix(int row, int col, int dep) {
     pimpl->data = new float[row * col * dep];
     pimpl->cols_p = new float*[row * col];
     pimpl->matrix_p = new float**[row];
 
-    for (size_t i = 0; i < row; i++) {
+    for (int i = 0; i < row; i++) {
         pimpl->matrix_p[i] = &(pimpl->cols_p[i * col]);
 
-        for (size_t j = 0; j < col; j++)
+        for (int j = 0; j < col; j++)
             pimpl->matrix_p[i][j] = pimpl->data + i * col * dep + j * dep;
     }
 }
@@ -28,7 +35,7 @@ Tensor::Tensor(const Tensor& that) {
 
     allocate_matrix(row, col, dep);
 
-    for (size_t i = 0; i < row * col * dep; i++) {
+    for (int i = 0; i < row * col * dep; i++) {
         pimpl->data[i] = that.pimpl->data[i];
     }
 }
@@ -55,7 +62,7 @@ void Tensor::init(int r, int c, int d, float v) {
     col = c;
     dep = d;
 
-    for (size_t i = 0; i < row * col * dep; i++) {
+    for (int i = 0; i < row * col * dep; i++) {
         pimpl->data[i] = v;
     }
 }
@@ -63,8 +70,8 @@ void Tensor::init(int r, int c, int d, float v) {
 float Tensor::getMin(int k) {
     float min = pimpl->data[0];
 
-    for (size_t i = 0; i < row; i++) {
-        for (size_t j = 0; j < col; j++) {
+    for (int i = 0; i < row; i++) {
+        for (int j = 0; j < col; j++) {
             if (pimpl->matrix_p[i][j][k] < min) min = pimpl->matrix_p[i][j][k];
         }
     }
@@ -75,8 +82,8 @@ float Tensor::getMin(int k) {
 float Tensor::getMax(int k) {
     float max = pimpl->data[0];
 
-    for (size_t i = 0; i < row; i++) {
-        for (size_t j = 0; j < col; j++) {
+    for (int i = 0; i < row; i++) {
+        for (int j = 0; j < col; j++) {
             if (pimpl->matrix_p[i][j][k] > max) max = pimpl->matrix_p[i][j][k];
         }
     }
@@ -99,9 +106,9 @@ float& Tensor::operator()(int i, int j, int k) {
 }
 
 ostream& operator<<(ostream& stream, const Tensor& obj) {
-    for (size_t k = 0; k < obj.dep; k++) {
-        for (size_t i = 0; i < obj.row; i++) {
-            for (size_t j = 0; j < obj.col; j++) {
+    for (int k = 0; k < obj.dep; k++) {
+        for (int i = 0; i < obj.row; i++) {
+            for (int j = 0; j < obj.col; j++) {
                 stream << obj.pimpl->matrix_p[i][j][k] << " ";
             }
 
@@ -115,7 +122,7 @@ ostream& operator<<(ostream& stream, const Tensor& obj) {
 }
 
 void Tensor::clamp(float low, float high) {
-    for (size_t i = 0; i < row * col * dep; i++) {
+    for (int i = 0; i < row * col * dep; i++) {
         if (pimpl->data[i] < low)
             pimpl->data[i] = low;
         else if (pimpl->data[i] > high)
@@ -124,9 +131,9 @@ void Tensor::clamp(float low, float high) {
 }
 
 void Tensor::rescale(float new_max) {
-    for (size_t k = 0; k < dep; k++) {
-        for (size_t i = 0; i < row; i++) {
-            for (size_t j = 0; j < col; j++) {
+    for (int k = 0; k < dep; k++) {
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
                 pimpl->matrix_p[i][j][k] = ((pimpl->matrix_p[i][j][k] - getMin(k)) / (getMax(k) - getMin(k))) * new_max;
             }
         }
@@ -136,9 +143,9 @@ void Tensor::rescale(float new_max) {
 Tensor Tensor::padding(int pad_h, int pad_w) {
     Tensor new_t{row + pad_h * 2, col + pad_w * 2, dep};
 
-    for (size_t k = 0; k < new_t.dep; k++) {
-        for (size_t i = 0; i < new_t.row; i++) {
-            for (size_t j = 0; j < new_t.col; j++) {
+    for (int k = 0; k < new_t.dep; k++) {
+        for (int i = 0; i < new_t.row; i++) {
+            for (int j = 0; j < new_t.col; j++) {
                 if (i >= pad_h && i < new_t.row - pad_h && j >= pad_w && j < new_t.col - pad_w)
                     new_t(i, j, k) = pimpl->matrix_p[i - pad_h][j - pad_w][k];
                 else
@@ -151,19 +158,19 @@ Tensor Tensor::padding(int pad_h, int pad_w) {
 }
 
 Tensor Tensor::subset(unsigned int row_start, unsigned int row_end, unsigned int col_start, unsigned int col_end, unsigned int depth_start, unsigned int depth_end) {
-    if (row_start < 0 || row_start > row + 1 || row_end < 0 || row_end > row + 1 ||
-        col_start < 0 || col_start > col + 1 || col_end < 0 || col_end > col + 1 ||
-        depth_start < 0 || depth_start > dep + 1 || depth_end < 0 || depth_end > dep + 1)
+    if (row_start < 0 || (int)row_start > row + 1 || row_end < 0 || (int)row_end > row + 1 ||
+        col_start < 0 || (int)col_start > col + 1 || col_end < 0 || (int)col_end > col + 1 ||
+        depth_start < 0 || (int)depth_start > dep + 1 || depth_end < 0 || (int)depth_end > dep + 1)
         throw(index_out_of_bound());
 
     if (row_end >= row_start || col_end >= col_start || depth_end >= depth_start)
         throw(invalid_parameter());
 
-    Tensor new_t{row_end - row_start, col_end - col_start, depth_end - depth_start};
+    Tensor new_t{(int)(row_end - row_start), (int)(col_end - col_start), (int)(depth_end - depth_start)};
 
-    for (size_t k = depth_start; k < depth_end; k++) {
-        for (size_t i = row_start; i < row_end; i++) {
-            for (size_t j = col_start; j < col_end; j++) {
+    for (unsigned int k = depth_start; k < depth_end; k++) {
+        for (unsigned int i = row_start; i < row_end; i++) {
+            for (unsigned int j = col_start; j < col_end; j++) {
                 new_t(i - row_start, j - col_start, k - depth_start) = pimpl->matrix_p[i][j][k];
             }
         }
@@ -181,9 +188,9 @@ Tensor Tensor::concat(const Tensor& rhs, int axis) {
                 throw(concat_wrong_dimension());
 
             new_t.init(row + rhs.row, col, dep);
-            for (size_t k = 0; k < dep; k++) {
-                for (size_t i = 0; i < row + rhs.row; i++) {
-                    for (size_t j = 0; j < col; j++) {
+            for (int k = 0; k < dep; k++) {
+                for (int i = 0; i < row + rhs.row; i++) {
+                    for (int j = 0; j < col; j++) {
                         if (i < row)
                             new_t(i, j, k) = pimpl->matrix_p[i][j][k];
                         else
@@ -198,9 +205,9 @@ Tensor Tensor::concat(const Tensor& rhs, int axis) {
                 throw(concat_wrong_dimension());
 
             new_t.init(row, col + rhs.col, dep);
-            for (size_t k = 0; k < dep; k++) {
-                for (size_t i = 0; i < row; i++) {
-                    for (size_t j = 0; j < col + rhs.col; j++) {
+            for (int k = 0; k < dep; k++) {
+                for (int i = 0; i < row; i++) {
+                    for (int j = 0; j < col + rhs.col; j++) {
                         if (j < col)
                             new_t(i, j, k) = pimpl->matrix_p[i][j][k];
                         else
@@ -215,9 +222,9 @@ Tensor Tensor::concat(const Tensor& rhs, int axis) {
                 throw(concat_wrong_dimension());
 
             new_t.init(row, col, dep + rhs.dep);
-            for (size_t k = 0; k < dep + rhs.dep; k++) {
-                for (size_t i = 0; i < row; i++) {
-                    for (size_t j = 0; j < col; j++) {
+            for (int k = 0; k < dep + rhs.dep; k++) {
+                for (int i = 0; i < row; i++) {
+                    for (int j = 0; j < col; j++) {
                         if (k < dep)
                             new_t(i, j, k) = pimpl->matrix_p[i][j][k];
                         else
@@ -238,7 +245,7 @@ Tensor operator-(Tensor lhs, const Tensor& rhs) {
     if (lhs.row != rhs.row || lhs.col != rhs.col || lhs.dep != rhs.dep)
         throw(dimension_mismatch());
 
-    for (size_t i = 0; i < lhs.row * lhs.col * lhs.dep; i++) {
+    for (int i = 0; i < lhs.row * lhs.col * lhs.dep; i++) {
         lhs.pimpl->data[i] -= rhs.pimpl->data[i];
     }
 
@@ -249,7 +256,7 @@ Tensor operator+(Tensor lhs, const Tensor& rhs) {
     if (lhs.row != rhs.row || lhs.col != rhs.col || lhs.dep != rhs.dep)
         throw(dimension_mismatch());
 
-    for (size_t i = 0; i < lhs.row * lhs.col * lhs.dep; i++) {
+    for (int i = 0; i < lhs.row * lhs.col * lhs.dep; i++) {
         lhs.pimpl->data[i] += rhs.pimpl->data[i];
     }
 
@@ -260,7 +267,7 @@ Tensor operator*(Tensor lhs, const Tensor& rhs) {
     if (lhs.row != rhs.row || lhs.col != rhs.col || lhs.dep != rhs.dep)
         throw(dimension_mismatch());
 
-    for (size_t i = 0; i < lhs.row * lhs.col * lhs.dep; i++) {
+    for (int i = 0; i < lhs.row * lhs.col * lhs.dep; i++) {
         lhs.pimpl->data[i] *= rhs.pimpl->data[i];
     }
 
@@ -271,7 +278,7 @@ Tensor operator/(Tensor lhs, const Tensor& rhs) {
     if (lhs.row != rhs.row || lhs.col != rhs.col || lhs.dep != rhs.dep)
         throw(dimension_mismatch());
 
-    for (size_t i = 0; i < lhs.row * lhs.col * lhs.dep; i++) {
+    for (int i = 0; i < lhs.row * lhs.col * lhs.dep; i++) {
         lhs.pimpl->data[i] /= rhs.pimpl->data[i];
     }
 
@@ -279,7 +286,7 @@ Tensor operator/(Tensor lhs, const Tensor& rhs) {
 }
 
 Tensor operator-(Tensor lhs, const float& rhs) {
-    for (size_t i = 0; i < lhs.row * lhs.col * lhs.dep; i++) {
+    for (int i = 0; i < lhs.row * lhs.col * lhs.dep; i++) {
         lhs.pimpl->data[i] -= rhs;
     }
 
@@ -287,7 +294,7 @@ Tensor operator-(Tensor lhs, const float& rhs) {
 }
 
 Tensor operator+(Tensor lhs, const float& rhs) {
-    for (size_t i = 0; i < lhs.row * lhs.col * lhs.dep; i++) {
+    for (int i = 0; i < lhs.row * lhs.col * lhs.dep; i++) {
         lhs.pimpl->data[i] += rhs;
     }
 
@@ -295,7 +302,7 @@ Tensor operator+(Tensor lhs, const float& rhs) {
 }
 
 Tensor operator*(Tensor lhs, const float& rhs) {
-    for (size_t i = 0; i < lhs.row * lhs.col * lhs.dep; i++) {
+    for (int i = 0; i < lhs.row * lhs.col * lhs.dep; i++) {
         lhs.pimpl->data[i] *= rhs;
     }
 
@@ -303,7 +310,7 @@ Tensor operator*(Tensor lhs, const float& rhs) {
 }
 
 Tensor operator/(Tensor lhs, const float& rhs) {
-    for (size_t i = 0; i < lhs.row * lhs.col * lhs.dep; i++) {
+    for (int i = 0; i < lhs.row * lhs.col * lhs.dep; i++) {
         lhs.pimpl->data[i] /= rhs;
     }
 
@@ -320,7 +327,7 @@ Tensor& Tensor::operator=(const Tensor& other) {
         }
 
         init(other.row, other.col, other.dep);
-        for (size_t i = 0; i < row * col * dep; i++) {
+        for (int i = 0; i < row * col * dep; i++) {
             pimpl->data[i] = other.pimpl->data[i];
         }
     }
@@ -336,9 +343,7 @@ Tensor Tensor::convolve(const Tensor& f) {
 
     Tensor this_padded = padding(pad_h, pad_w);
 
-    for (size_t k = 0; k < dep; k++)
-    {
-           
+    for (int k = 0; k < dep; k++) {
     }
 
     return new_t;
@@ -354,4 +359,29 @@ int Tensor::cols() {
 
 int Tensor::depth() {
     return dep;
+}
+
+void Tensor::init_random(float mean, float std) {
+    if (pimpl) {
+        float y1;
+        float y2;
+        float num;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                for (int k = 0; k < dep; k++) {
+                    y1 = ((float)(rand()) + 1.) / ((float)(RAND_MAX) + 1.);
+                    y2 = ((float)(rand()) + 1.) / ((float)(RAND_MAX) + 1.);
+                    num = cos(2 * PI * y2) * sqrt(-2. * log(y1));
+                    this->operator()(i, j, k) = mean + num * std;
+                }
+            }
+        }
+
+    } else {
+        throw(tensor_not_initialized());
+    }
+}
+
+void Tensor::showSize() {
+    cout << this->rows() << " " << this->cols() << " " << this->depth() << endl;
 }

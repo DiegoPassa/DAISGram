@@ -25,7 +25,7 @@ class Tensor {
     int row;
     int dep;
 
-    void allocate_matrix(size_t row, size_t col, size_t dep);
+    void allocate_matrix(int row, int col, int dep);
 
    public:
     /**
@@ -33,12 +33,7 @@ class Tensor {
      * 
      * Parameter-less class constructor 
      */
-    Tensor() {
-        pimpl = nullptr;
-        this->col = 0;
-        this->row = 0;
-        this->dep = 0;
-    }
+    Tensor();
 
     /**
      * Class constructor
@@ -203,26 +198,7 @@ class Tensor {
      * @param mean The mean
      * @param std  Standard deviation
      */
-    void init_random(float mean = 1.0, float std = 0.0) {
-        if (pimpl) {
-            float y1;
-            float y2;
-            float num;
-            for (int i = 0; i < row; i++) {
-                for (int j = 0; j < col; j++) {
-                    for (int k = 0; k < dep; k++) {
-                        y1 = ((float)(rand()) + 1.) / ((float)(RAND_MAX) + 1.);
-                        y2 = ((float)(rand()) + 1.) / ((float)(RAND_MAX) + 1.);
-                        num = cos(2 * PI * y2) * sqrt(-2. * log(y1));
-                        this->operator()(i, j, k) = mean + num * std;
-                    }
-                }
-            }
-
-        } else {
-            throw(tensor_not_initialized());
-        }
-    }
+    void init_random(float mean = 1.0, float std = 0.0);
 
     /**
      * Constant Initialization
@@ -374,9 +350,7 @@ class Tensor {
      * showSize
      * shows the dimensions of the tensor
      */
-    void showSize() {
-        cout << this->rows() << " " << this->cols() << " " << this->depth() << endl;
-    }
+    void showSize();
 
     /**
      * Operator overloading <<
