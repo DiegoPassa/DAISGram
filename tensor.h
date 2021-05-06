@@ -1,11 +1,12 @@
 #ifndef TENSOR_H
 #define TENSOR_H
 
-#include <iostream>
-#include <string>
-#include <random>
 #include <math.h>
+
 #include <fstream>
+#include <iostream>
+#include <random>
+#include <string>
 
 #include "dais_exc.h"
 
@@ -15,18 +16,18 @@
 
 using namespace std;
 
-class Tensor
-{
-private:
+class Tensor {
+   private:
+    struct Impl;  //<-- you are free to change this data structure (don't use vectors)
+    Impl *pimpl;
 
-    float * data = nullptr; //<-- you are free to change this data structure (don't use vectors)
+    int row = 0;  // number of rows
+    int col = 0;  // number of columns
+    int dep = 0;  // tensor depth
 
-    int r = 0;  // number of rows
-    int c = 0;  // number of columns
-    int d = 0;  // tensor depth
+    void allocate_matrix(int row, int col, int dep);
 
-public:
-
+   public:
     /**
      * Class constructor
      * 
@@ -84,8 +85,7 @@ public:
      *      
      * @return the new Tensor
      */
-    Tensor(const Tensor& that);
-
+    Tensor(const Tensor &that);
 
     /**
      * Operator overloading -
@@ -99,8 +99,8 @@ public:
      * @return returns a new Tensor containing the result of the operation
      */
     Tensor operator-(const Tensor &rhs);
-    
-     /**
+
+    /**
      * Operator overloading +
      * 
      * It performs the point-wise sum between two Tensors.
@@ -111,7 +111,7 @@ public:
      * 
      * @return returns a new Tensor containing the result of the operation
     */
-    Tensor operator +(const Tensor &rhs);
+    Tensor operator+(const Tensor &rhs);
 
     /**
      * Operator overloading *
@@ -125,7 +125,7 @@ public:
      * @return returns a new Tensor containing the result of the operation
      */
     Tensor operator*(const Tensor &rhs);
-    
+
     /**
      * Operator overloading /
      * 
@@ -190,7 +190,7 @@ public:
      * 
      * @return a reference to the receiver object
      */
-    Tensor & operator=(const Tensor &other);
+    Tensor &operator=(const Tensor &other);
 
     /**
      * Random Initialization
@@ -200,7 +200,7 @@ public:
      * @param mean The mean
      * @param std  Standard deviation
      */
-    void init_random(float mean=0.0, float std=1.0);
+    void init_random(float mean = 0.0, float std = 1.0);
 
     /**
      * Constant Initialization
@@ -212,7 +212,7 @@ public:
      * @param d The depth
      * @param v The initialization value
      */
-    void init(int r, int c, int d, float v=0.0);
+    void init(int r, int c, int d, float v = 0.0);
 
     /**
      * Tensor Clamp
@@ -237,7 +237,7 @@ public:
      * 
      * @param new_max New maximum vale
      */
-    void rescale(float new_max=1.0);
+    void rescale(float new_max = 1.0);
 
     /**
      * Tensor padding
@@ -291,8 +291,7 @@ public:
      * @param axis The axis along which perform the concatenation 
      * @return a new Tensor containing the result of the concatenation
      */
-    Tensor concat(const Tensor &rhs, int axis=0);
-
+    Tensor concat(const Tensor &rhs, int axis = 0);
 
     /** 
      * Convolution 
@@ -330,7 +329,7 @@ public:
      * @return the depth of the tensor
      */
     int depth();
-    
+
     /** 
      * Get minimum 
      * 
@@ -359,7 +358,7 @@ public:
      * 
      */
     void showSize();
-    
+
     /* IOSTREAM */
 
     /**
@@ -374,7 +373,7 @@ public:
      * ...
      * [..., ..., k]
      */
-    friend ostream& operator<< (ostream& stream, const Tensor & obj);
+    friend ostream &operator<<(ostream &stream, const Tensor &obj);
 
     /**
      * Reading from file
@@ -432,7 +431,6 @@ public:
      * 
      */
     void write_file(string filename);
-
 };
 
 #endif
