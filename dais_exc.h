@@ -46,10 +46,6 @@ struct filter_odd_dimensions{
     string code = "008";   
 };
 
-struct invalid_parameter { 
-    string msg = "Invalid parameter";
-    string code = "009";
-};
 
 #endif
 

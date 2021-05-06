@@ -1,12 +1,11 @@
 #ifndef TENSOR_H
 #define TENSOR_H
 
-#include <math.h>
-
-#include <fstream>
 #include <iostream>
-#include <random>
 #include <string>
+#include <random>
+#include <math.h>
+#include <fstream>
 
 #include "dais_exc.h"
 
@@ -16,18 +15,18 @@
 
 using namespace std;
 
-class Tensor {
-   private:
-    struct Impl;
-    Impl *pimpl;
+class Tensor
+{
+private:
 
-    int col;
-    int row;
-    int dep;
+    float * data = nullptr; //<-- you are free to change this data structure (don't use vectors)
 
-    void allocate_matrix(int row, int col, int dep);
+    int r = 0;  // number of rows
+    int c = 0;  // number of columns
+    int d = 0;  // tensor depth
 
-   public:
+public:
+
     /**
      * Class constructor
      * 
@@ -55,8 +54,10 @@ class Tensor {
      */
     ~Tensor();
 
+    void init_progressive();
+
     /**
-     * Operator oveloding ()
+     * Operator overloading ()
      * 
      * if indexes are out of bound throw index_out_of_bound() exception
      * 
@@ -65,7 +66,7 @@ class Tensor {
     float operator()(int i, int j, int k) const;
 
     /**
-     * Operator oveloding ()
+     * Operator overloading ()
      * 
      * Return the pointer to the location [i][j][k] such that the operator (i,j,k) can be used to 
      * modify tensor data.
@@ -79,116 +80,117 @@ class Tensor {
     /**
      * Copy constructor
      * 
-     * This constructor copy the data from another Tensor
+     * This constructor copies the data from another Tensor
      *      
      * @return the new Tensor
      */
-    Tensor(const Tensor &that);
+    Tensor(const Tensor& that);
+
 
     /**
-     * Operator oveloding -
+     * Operator overloading -
      * 
-     * Perform the point-wise difference between two Tensors.
+     * It performs the point-wise difference between two Tensors.
      * 
-     * lhs(i,j,k)=lhs(i,j,k)-rhs(i,j,k)
+     * result(i,j,k)=this(i,j,k)-rhs(i,j,k)
      * 
+     * The two tensors must have the same size otherwise throw a dimension_mismatch()
      * 
-     * @return lhs with the result of the operation (lhs is passed by copy, so is a new lhs ;) )
+     * @return returns a new Tensor containing the result of the operation
      */
-    friend Tensor operator-(Tensor lhs, const Tensor &rhs);
+    Tensor operator-(const Tensor &rhs);
+    
+     /**
+     * Operator overloading +
+     * 
+     * It performs the point-wise sum between two Tensors.
+     * 
+     * result(i,j,k)=this(i,j,k)+rhs(i,j,k)
+     * 
+     * The two tensors must have the same size otherwise throw a dimension_mismatch()
+     * 
+     * @return returns a new Tensor containing the result of the operation
+    */
+    Tensor operator +(const Tensor &rhs);
 
     /**
-     * Operator oveloding +
+     * Operator overloading *
      * 
-     * Perform the point-wise difference between two Tensors.
+     * It performs the point-wise product between two Tensors.
      * 
-     * lhs(i,j,k)=lhs(i,j,k)+rhs(i,j,k)
+     * result(i,j,k)=this(i,j,k)*rhs(i,j,k)
      * 
+     * The two tensors must have the same size otherwise throw a dimension_mismatch()
      * 
-     * @return lhs with the result of the operation (lhs is passed by copy, so is a new lhs ;) )
+     * @return returns a new Tensor containing the result of the operation
      */
-    friend Tensor operator+(Tensor lhs, const Tensor &rhs);
-
+    Tensor operator*(const Tensor &rhs);
+    
     /**
-     * Operator oveloding *
+     * Operator overloading /
      * 
-     * Perform the point-wise difference between two Tensors.
+     * It performs the point-wise division between two Tensors.
      * 
-     * lhs(i,j,k)=lhs(i,j,k)*rhs(i,j,k)
+     * result(i,j,k)=this(i,j,k)/rhs(i,j,k)
      * 
+     * The two tensors must have the same size otherwise throw a dimension_mismatch()
      * 
-     * @return lhs with the result of the operation (lhs is passed by copy, so is a new lhs ;) )
+     * @return returns a new Tensor containing the result of the operation
      */
-    friend Tensor operator*(Tensor lhs, const Tensor &rhs);
+    Tensor operator/(const Tensor &rhs);
 
     /**
-     * Operator oveloding /
+     * Operator overloading - 
      * 
-     * Perform the point-wise difference between two Tensors.
+     * It performs the point-wise difference between a Tensor and a constant
      * 
-     * lhs(i,j,k)=lhs(i,j,k)/rhs(i,j,k)
+     * result(i,j,k)=this(i,j,k)-rhs
      * 
-     * 
-     * @return lhs with the result of the operation (lhs is passed by copy, so is a new lhs ;) )
+     * @return returns a new Tensor containing the result of the operation
      */
-    friend Tensor operator/(Tensor lhs, const Tensor &rhs);
+    Tensor operator-(const float &rhs);
 
     /**
-     * Operator oveloding - between a Tensor and a constant
+     * Operator overloading +
      * 
-     * Perform the point-wise difference between two Tensors.
+     * It performs the point-wise sum between a Tensor and a constant
      * 
-     * lhs(i,j,k)=lhs(i,j,k)-rhs
+     * result(i,j,k)=this(i,j,k)+rhs
      * 
-     * 
-     * @return lhs with the result of the operation (lhs is passed by copy, so is a new lhs ;) )
+     * @return returns a new Tensor containing the result of the operation
      */
-    friend Tensor operator-(Tensor lhs, const float &rhs);
+    Tensor operator+(const float &rhs);
 
     /**
-     * Operator oveloding + between a Tensor and a constant
+     * Operator overloading *
      * 
-     * Perform the point-wise difference between two Tensors.
+     * It performs the point-wise product between a Tensor and a constant
      * 
-     * lhs(i,j,k)=lhs(i,j,k)+rhs
+     * result(i,j,k)=this(i,j,k)*rhs
      * 
-     * 
-     * @return lhs with the result of the operation (lhs is passed by copy, so is a new lhs ;) )
+     * @return returns a new Tensor containing the result of the operation
      */
-    friend Tensor operator+(Tensor lhs, const float &rhs);
+    Tensor operator*(const float &rhs);
 
     /**
-     * Operator oveloding * between a Tensor and a constant
+     * Operator overloading / between a Tensor and a constant
      * 
-     * Perform the point-wise difference between two Tensors.
+     * It performs the point-wise division between a Tensor and a constant
      * 
-     * lhs(i,j,k)=lhs(i,j,k)*rhs
+     * result(i,j,k)=this(i,j,k)/rhs
      * 
-     * 
-     * @return lhs with the result of the operation (lhs is passed by copy, so is a new lhs ;) )
+     * @return returns a new Tensor containing the result of the operation
      */
-    friend Tensor operator*(Tensor lhs, const float &rhs);
+    Tensor operator/(const float &rhs);
 
     /**
-     * Operator oveloding / between a Tensor and a constant
-     * 
-     * Perform the point-wise difference between two Tensors.
-     * 
-     * lhs(i,j,k)=lhs(i,j,k)/rhs
-     * 
-     * 
-     * @return lhs with the result of the operation (lhs is passed by copy, so is a new lhs ;) )
-     */
-    friend Tensor operator/(Tensor lhs, const float &rhs);
-
-    /**
-     * Operator oveloding = (assignment) 
+     * Operator overloading = (assignment) 
      * 
      * Perform the assignment between this object and another
      * 
-     * @return a pointer to the receiver object
+     * @return a reference to the receiver object
      */
-    Tensor &operator=(const Tensor &other);
+    Tensor & operator=(const Tensor &other);
 
     /**
      * Random Initialization
@@ -198,7 +200,7 @@ class Tensor {
      * @param mean The mean
      * @param std  Standard deviation
      */
-    void init_random(float mean = 1.0, float std = 0.0);
+    void init_random(float mean=0.0, float std=1.0);
 
     /**
      * Constant Initialization
@@ -210,7 +212,7 @@ class Tensor {
      * @param d The depth
      * @param v The initialization value
      */
-    void init(int r, int c, int d, float v = 0.0);
+    void init(int r, int c, int d, float v=0.0);
 
     /**
      * Tensor Clamp
@@ -235,7 +237,7 @@ class Tensor {
      * 
      * @param new_max New maximum vale
      */
-    void rescale(float new_max = 1.0);
+    void rescale(float new_max=1.0);
 
     /**
      * Tensor padding
@@ -289,7 +291,8 @@ class Tensor {
      * @param axis The axis along which perform the concatenation 
      * @return a new Tensor containing the result of the concatenation
      */
-    Tensor concat(const Tensor &rhs, int axis = 0);
+    Tensor concat(const Tensor &rhs, int axis=0);
+
 
     /** 
      * Convolution 
@@ -327,7 +330,7 @@ class Tensor {
      * @return the depth of the tensor
      */
     int depth();
-
+    
     /** 
      * Get minimum 
      * 
@@ -348,40 +351,53 @@ class Tensor {
 
     /** 
      * showSize
-     * shows the dimensions of the tensor
+     * 
+     * shows the dimensions of the tensor on the standard output.
+     * 
+     * The format is the following:
+     * rows" x "colums" x "depth
+     * 
      */
     void showSize();
+    
+    /* IOSTREAM */
 
     /**
      * Operator overloading <<
      * 
      * Use the overaloading of << to show the content of the tensor.
      * 
-     * The content is shown considering each data( , , k).
+     * You are free to chose the output format, btw we suggest you to show the tensor by layer.
      * 
+     * [..., ..., 0]
+     * [..., ..., 1]
+     * ...
+     * [..., ..., k]
      */
-    friend ostream &operator<<(ostream &stream, const Tensor &obj);
+    friend ostream& operator<< (ostream& stream, const Tensor & obj);
 
     /**
      * Reading from file
      * 
-     * Load the content of a tensor from file.
+     * Load the content of a tensor from a textual file.
      * 
      * The file should have this structure: the first three lines provide the dimensions while 
      * the following lines contains the actual data by channel.
      * 
-     * Example:
-     * number of rows
-     * number of columns
-     * depth
-     * value(0,0,0)
-     * value(0,0,1)
-     * value(0,0,2)
+     * For example, a tensor of size 4x3x2 will have the following structure:
+     * 4
+     * 3
+     * 2
+     * data(0,0,0)
+     * data(0,1,0)
+     * data(0,2,0)
+     * data(1,0,0)
+     * data(1,1,0)
      * .
      * .
      * .
-     * value(0,0,k)
-     * value(0,1,0)
+     * data(3,1,1)
+     * data(3,2,1)
      * 
      * if the file is not reachable throw unable_to_read_file()
      * 
@@ -392,28 +408,31 @@ class Tensor {
     /**
      * Write the tensor to a file
      * 
-     * Write the content of a tensor to a file.
+     * Write the content of a tensor to a textual file.
      * 
      * The file should have this structure: the first three lines provide the dimensions while 
      * the following lines contains the actual data by channel.
      * 
-     * Example:
-     * number of rows
-     * number of columns
-     * depth
-     * value(0,0,0)
-     * value(0,0,1)
-     * value(0,0,2)
+     * For example, a tensor of size 4x3x2 will have the following structure:
+     * 4
+     * 3
+     * 2
+     * data(0,0,0)
+     * data(0,1,0)
+     * data(0,2,0)
+     * data(1,0,0)
+     * data(1,1,0)
      * .
      * .
      * .
-     * value(0,0,k)
-     * value(0,1,0)
+     * data(3,1,1)
+     * data(3,2,1)
      * 
      * if the file is not reachable throw unable_to_read_file()
      * 
      */
     void write_file(string filename);
+
 };
 
 #endif
