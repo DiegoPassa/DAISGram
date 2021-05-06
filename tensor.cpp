@@ -106,17 +106,17 @@ float& Tensor::operator()(int i, int j, int k) {
 }
 
 ostream& operator<<(ostream& stream, const Tensor& obj) {
-    for (int k = 0; k < obj.dep; k++) {
-        for (int i = 0; i < obj.row; i++) {
-            for (int j = 0; j < obj.col; j++) {
-                stream << obj.pimpl->matrix_p[i][j][k] << " ";
+    for (int i = 0; i < obj.row; i++) {
+        for (int j = 0; j < obj.col; j++) {
+            stream << "[";
+            for (int k = 0; k < obj.dep-1; k++){
+                stream << obj.pimpl->matrix_p[i][j][k] << ",";
             }
-
-            stream << "\n";
+            stream << obj.pimpl->matrix_p[i][j][obj.dep-1]  << "] ";
         }
-
         stream << "\n";
     }
+    stream << "\n";
 
     return stream;
 }
