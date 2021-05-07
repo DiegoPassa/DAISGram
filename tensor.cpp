@@ -177,7 +177,7 @@ Tensor Tensor::subset(unsigned int row_start, unsigned int row_end, unsigned int
         depth_start < 0 || (int)depth_start > dep + 1 || depth_end < 0 || (int)depth_end > dep + 1)
         throw(index_out_of_bound());
 
-    if (row_end >= row_start || col_end >= col_start || depth_end >= depth_start)
+    if (row_end <= row_start || col_end <= col_start || depth_end <= depth_start)
         throw(invalid_parameter());
 
     Tensor new_t{(int)(row_end - row_start), (int)(col_end - col_start), (int)(depth_end - depth_start)};

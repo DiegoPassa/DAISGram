@@ -18,9 +18,9 @@ class DAISGram{
 
     public:
 
-        DAISGram();
+        //DAISGram();
 
-        ~DAISGram();
+        //~DAISGram();
 
         /**
          * Load a bitmap from file
@@ -70,7 +70,7 @@ class DAISGram{
          * @param bright the amount of bright to add (if negative the image gets darker)
          * @return returns a new DAISGram containing the modified object
          */
-        DAISGram brighten(float bright);
+        //DAISGram brighten(float bright);
 
         /**
          * Create a grayscale version of the object
@@ -79,7 +79,7 @@ class DAISGram{
          *  
          * @return returns a new DAISGram containing the modified object
          */
-        DAISGram grayscale();
+        //DAISGram grayscale();
 
         /**
          * Create a Warhol effect on the image
@@ -110,7 +110,7 @@ class DAISGram{
          * 
          * @return returns a new DAISGram containing the modified object
          */
-        DAISGram sharpen();
+        //DAISGram sharpen();
 
         /**
          * Emboss the image
@@ -127,7 +127,7 @@ class DAISGram{
          *  
          * @return returns a new DAISGram containing the modified object
          */
-        DAISGram emboss();
+        //DAISGram emboss();
 
         /**
          * Smooth the image
@@ -145,7 +145,7 @@ class DAISGram{
          * @param h the size of the filter
          * @return returns a new DAISGram containing the modified object
          */
-        DAISGram smooth(int h=3);
+        //DAISGram smooth(int h=3);
 
         /**
          * Edges of an image
@@ -165,7 +165,7 @@ class DAISGram{
          *  
          * @return returns a new DAISGram containing the modified object
          */  
-        DAISGram edge();
+        //DAISGram edge();
 
         /**
          * Blend with anoter image
@@ -182,7 +182,7 @@ class DAISGram{
          * @param alpha The parameter of the convex combination  
          * @return returns a new DAISGram containing the blending of the two images.
          */  
-        DAISGram blend(const DAISGram & rhs, float alpha=0.5);
+        //DAISGram blend(const DAISGram & rhs, float alpha=0.5);
 
         /**
          * Green Screen
@@ -198,7 +198,7 @@ class DAISGram{
          * @param threshold[] The threshold to add/remove for each color (threshold[0] = RED, threshold[1]=GREEN, threshold[2]=BLUE) 
          * @return returns a new DAISGram containing the result.
          */  
-        DAISGram greenscreen(DAISGram & bkg, int rgb[], float threshold[]);
+        //DAISGram greenscreen(DAISGram & bkg, int rgb[], float threshold[]);
 
         /**
          * Equalize
@@ -209,7 +209,7 @@ class DAISGram{
          * 
          * @return returns a new DAISGram containing the equalized image.
          */  
-        DAISGram equalize();
+        //DAISGram equalize();
 
 
         /**
