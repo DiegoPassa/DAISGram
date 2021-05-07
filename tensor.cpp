@@ -284,6 +284,39 @@ Tensor Tensor::operator-(const Tensor &rhs){
     return newTensor;
 }
 
+Tensor Tensor::operator+(const Tensor &rhs){
+    if (row != rhs.row || col != rhs.col) {
+        throw (dimension_mismatch());
+    }
+    Tensor newTensor{row, col, dep};
+    for (int i = 0; i < row * col * dep; i++) {
+        newTensor.pimpl->data[i] = pimpl->data[i] + rhs.pimpl->data[i];
+    }
+    return newTensor;
+}
+
+Tensor Tensor::operator*(const Tensor &rhs){
+    if (row != rhs.row || col != rhs.col) {
+        throw (dimension_mismatch());
+    }
+    Tensor newTensor{row, col, dep};
+    for (int i = 0; i < row * col * dep; i++) {
+        newTensor.pimpl->data[i] = pimpl->data[i] * rhs.pimpl->data[i];
+    }
+    return newTensor;
+}
+
+Tensor Tensor::operator/(const Tensor &rhs){
+    if (row != rhs.row || col != rhs.col) {
+        throw (dimension_mismatch());
+    }
+    Tensor newTensor{row, col, dep};
+    for (int i = 0; i < row * col * dep; i++) {
+        newTensor.pimpl->data[i] = pimpl->data[i] / rhs.pimpl->data[i];
+    }
+    return newTensor;
+}
+
 Tensor Tensor::convolve(const Tensor& f) {
     Tensor new_t{row, col, dep};
 
