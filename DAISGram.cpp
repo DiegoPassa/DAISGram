@@ -99,6 +99,24 @@ int DAISGram::getDepth() {
     return data.depth();
 }
 
+DAISGram DAISGram::grayscale(){
+    DAISGram gray;
+    gray.data = data;
+    for (int i = 0; i < data.rows(); i++){
+        for (int j = 0; j < data.cols(); j++){
+            int media = 0;
+            for (int k = 0; k < data.depth(); k++){
+                media+=data(i, j ,k);
+            }
+            media/=data.depth();
+            for (int k = 0; k < data.depth(); k++){
+                gray.data(i, j, k) = media;
+            }
+        }
+    }
+    return gray;
+}
+
 /**
  * Create a Warhol effect on the image
  * 
