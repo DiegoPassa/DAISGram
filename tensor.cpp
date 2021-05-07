@@ -372,7 +372,13 @@ void Tensor::write_file(string filename){
     if(!ost) throw(unable_to_read_file());
         
     ost <<row << "\n" << col << "\n" << dep << "\n";
-        
-    for(int i = 0; i < row * col * dep; i++)
-            ost << pimpl->data[i] << "\n";
+
+    for (int i = 0; i < dep; i++)
+        for (int j = 0; j < row; j++)
+            for (int k = 0; k < col; k++)
+                ost << pimpl->matrix_p[j][k][i] << "\n";
+                // std::cout << "data(" << j << "," << k << "," << i << ")" << std::endl;
+
+    /* for(int i = 0; i < row * col * dep; i++)
+            ost << pimpl->data[i] << "\n"; */
 }
