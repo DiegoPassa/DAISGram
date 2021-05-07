@@ -374,6 +374,22 @@ void Tensor::showSize() {
     cout << this->rows() << " " << this->cols() << " " << this->depth() << endl;
 }
 
+void Tensor::read_file(string filename){
+    ifstream ifs{filename};
+
+    if (!ifs) throw(unable_to_read_file());
+
+    ifs >> row;
+    ifs >> col;
+    ifs >> dep;
+
+    int i = 0;
+    while (!ifs.eof()){
+        ifs >> pimpl->data[(i*dep)%(row*col*dep) + (i/(col*dep))];
+        i++;
+    }
+}
+
 void Tensor::write_file(string filename) {
     ofstream ost{filename};
 
