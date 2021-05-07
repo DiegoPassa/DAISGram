@@ -331,3 +331,15 @@ void Tensor::init_random(float mean, float std) {
 void Tensor::showSize() {
     cout << this->rows() << " " << this->cols() << " " << this->depth() << endl;
 }
+
+void Tensor::write_file(string filename){
+        
+    ofstream ost{filename};
+        
+    if(!ost) throw(unable_to_read_file());
+        
+    ost <<row << "\n" << col << "\n" << dep << "\n";
+        
+    for(int i = 0; i < row * col * dep; i++)
+            ost << pimpl->data[i] << "\n";
+}
