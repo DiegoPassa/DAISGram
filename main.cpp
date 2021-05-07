@@ -17,11 +17,19 @@ int main(int, char**) {
     std::cout << t;
     std::cout << t.padding(2, 2);
 
-    DAISGram andy;
+    //TEST POSITIVO
+    /* DAISGram andy;
     andy.load_image("../images/flower_hires.bmp");
 
     andy = andy.warhol();
-    andy.save_image("../andy.bmp");
+    andy.save_image("../andy.bmp"); */
+
+    //TEST POSITIVO
+    /* t.read_file("../tensors/t_4_30_2_progressive.txt");
+
+    std::cout << t;
+
+    t.write_file("../tensoree.txt"); */
 
     return 0;
 }

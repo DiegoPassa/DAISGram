@@ -322,7 +322,43 @@ Tensor Tensor::operator/(const Tensor& rhs) {
     for (int i = 0; i < row * col * dep; i++) {
         newTensor.pimpl->data[i] = pimpl->data[i] / rhs.pimpl->data[i];
     }
-    
+
+    return newTensor;
+}
+
+Tensor Tensor::operator+(const float& rhs) {
+    Tensor newTensor{row, col, dep};
+    for (int i = 0; i < row * col * dep; i++) {
+        newTensor.pimpl->data[i] += rhs;
+    }
+
+    return newTensor;
+}
+
+Tensor Tensor::operator-(const float& rhs) {
+    Tensor newTensor{row, col, dep};
+    for (int i = 0; i < row * col * dep; i++) {
+        newTensor.pimpl->data[i] -= rhs;
+    }
+
+    return newTensor;
+}
+
+Tensor Tensor::operator*(const float& rhs) {
+    Tensor newTensor{row, col, dep};
+    for (int i = 0; i < row * col * dep; i++) {
+        newTensor.pimpl->data[i] *= rhs;
+    }
+
+    return newTensor;
+}
+
+Tensor Tensor::operator/(const float& rhs) {
+    Tensor newTensor{row, col, dep};
+    for (int i = 0; i < row * col * dep; i++) {
+        newTensor.pimpl->data[i] /= rhs;
+    }
+
     return newTensor;
 }
 
@@ -374,7 +410,7 @@ void Tensor::showSize() {
     cout << this->rows() << " " << this->cols() << " " << this->depth() << endl;
 }
 
-void Tensor::read_file(string filename){
+void Tensor::read_file(string filename) {
     ifstream ifs{filename};
 
     if (!ifs) throw(unable_to_read_file());
@@ -383,10 +419,20 @@ void Tensor::read_file(string filename){
     ifs >> col;
     ifs >> dep;
 
-    int i = 0;
-    while (!ifs.eof()){
-        ifs >> pimpl->data[(i*dep)%(row*col*dep) + (i/(col*dep))];
+    init(row, col, dep);
+
+    /* int i = 0;
+    while (!ifs.eof()) {
+        ifs >> pimpl->data[(i * dep) % (row * col * dep) + (i / (col * dep))];
         i++;
+    } */ 
+
+    for (int k = 0; k < dep; k++) {
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                ifs >> pimpl->matrix_p[i][j][k];
+            }
+        }
     }
 }
 
@@ -403,8 +449,4 @@ void Tensor::write_file(string filename) {
         for (int j = 0; j < row; j++)
             for (int k = 0; k < col; k++)
                 ost << pimpl->matrix_p[j][k][i] << "\n";
-    // std::cout << "data(" << j << "," << k << "," << i << ")" << std::endl;
-
-    /* for(int i = 0; i < row * col * dep; i++)
-            ost << pimpl->data[i] << "\n"; */
 }
