@@ -327,8 +327,8 @@ void Tensor::write_file(string filename){
         
     if(!ost) throw(unable_to_read_file());
         
-    ost<<row<<"\n"<<col<<"\n"<<dep<<"\n";
+    ost <<row << "\n" << col << "\n" << dep << "\n";
         
-    for(int i=0; i< row *col*dep; i++)
-            ost<<pimpl->data[i]<<"\n";
+    for(int i = 0; i < row * col * dep; i++)
+            ost << pimpl->data[i] << "\n";
 }
