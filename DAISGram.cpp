@@ -99,17 +99,17 @@ int DAISGram::getDepth() {
     return data.depth();
 }
 
-DAISGram DAISGram::grayscale(){
+DAISGram DAISGram::grayscale() {
     DAISGram gray;
     gray.data = data;
-    for (int i = 0; i < data.rows(); i++){
-        for (int j = 0; j < data.cols(); j++){
+    for (int i = 0; i < data.rows(); i++) {
+        for (int j = 0; j < data.cols(); j++) {
             int media = 0;
-            for (int k = 0; k < data.depth(); k++){
-                media+=data(i, j ,k);
+            for (int k = 0; k < data.depth(); k++) {
+                media += data(i, j, k);
             }
-            media/=data.depth();
-            for (int k = 0; k < data.depth(); k++){
+            media /= data.depth();
+            for (int k = 0; k < data.depth(); k++) {
                 gray.data(i, j, k) = media;
             }
         }
@@ -117,19 +117,6 @@ DAISGram DAISGram::grayscale(){
     return gray;
 }
 
-/**
- * Create a Warhol effect on the image
- * 
- * This function returns a composition of 4 different images in which the:
- * - top left is the original image
- * - top right is the original image in which the Red and Green channel are swapped
- * - bottom left is the original image in which the Blue and Green channel are swapped
- * - bottom right is the original image in which the Red and Blue channel are swapped
- *  
- * The output image is twice the dimensions of the original one.
- * 
- * @return returns a new DAISGram containing the modified object
- */
 DAISGram DAISGram::warhol() {
     DAISGram result;
 
@@ -151,4 +138,14 @@ DAISGram DAISGram::warhol() {
 
     result.data = result.data.concat(bottom, 0);
     return result;
+}
+
+DAISGram DAISGram::blend(const DAISGram& rhs, float alpha) {
+    if (alpha < 0 || alpha > 1)
+        throw(invalid_parameter());
+
+    DAISGram new_d;
+    new_d.data = data * alpha + rhs.data * (1 - alpha);
+
+    return new_d;
 }

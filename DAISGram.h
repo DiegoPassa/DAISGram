@@ -182,7 +182,7 @@ class DAISGram{
          * @param alpha The parameter of the convex combination  
          * @return returns a new DAISGram containing the blending of the two images.
          */  
-        //DAISGram blend(const DAISGram & rhs, float alpha=0.5);
+        DAISGram blend(const DAISGram & rhs, float alpha=0.5);
 
         /**
          * Green Screen

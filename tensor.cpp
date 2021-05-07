@@ -82,7 +82,7 @@ void Tensor::init(int r, int c, int d, float v) {
     }
 }
 
-float Tensor::getMin(int k) {
+float Tensor::getMin(int k) const {
     float min = pimpl->data[0];
 
     for (int i = 0; i < row; i++) {
@@ -94,7 +94,7 @@ float Tensor::getMin(int k) {
     return min;
 }
 
-float Tensor::getMax(int k) {
+float Tensor::getMax(int k) const {
     float max = pimpl->data[0];
 
     for (int i = 0; i < row; i++) {
@@ -155,7 +155,7 @@ void Tensor::rescale(float new_max) {
     }
 }
 
-Tensor Tensor::padding(int pad_h, int pad_w) {
+Tensor Tensor::padding(int pad_h, int pad_w) const {
     Tensor new_t{row + pad_h * 2, col + pad_w * 2, dep};
 
     for (int k = 0; k < new_t.dep; k++) {
@@ -172,7 +172,7 @@ Tensor Tensor::padding(int pad_h, int pad_w) {
     return new_t;
 }
 
-Tensor Tensor::subset(unsigned int row_start, unsigned int row_end, unsigned int col_start, unsigned int col_end, unsigned int depth_start, unsigned int depth_end) {
+Tensor Tensor::subset(unsigned int row_start, unsigned int row_end, unsigned int col_start, unsigned int col_end, unsigned int depth_start, unsigned int depth_end) const {
     if (row_start < 0 || (int)row_start > row + 1 || row_end < 0 || (int)row_end > row + 1 ||
         col_start < 0 || (int)col_start > col + 1 || col_end < 0 || (int)col_end > col + 1 ||
         depth_start < 0 || (int)depth_start > dep + 1 || depth_end < 0 || (int)depth_end > dep + 1)
@@ -194,7 +194,7 @@ Tensor Tensor::subset(unsigned int row_start, unsigned int row_end, unsigned int
     return new_t;
 }
 
-Tensor Tensor::concat(const Tensor& rhs, int axis) {
+Tensor Tensor::concat(const Tensor& rhs, int axis) const {
     Tensor new_t;
 
     switch (axis) {
@@ -274,12 +274,12 @@ Tensor& Tensor::operator=(const Tensor& other) {
     return (*this);
 }
 
-Tensor Tensor::operator-(const Tensor& rhs) {
+Tensor Tensor::operator-(const Tensor& rhs) const {
     if (row != rhs.row || col != rhs.col || dep != rhs.dep) {
         throw(dimension_mismatch());
     }
 
-    Tensor newTensor{row, col, dep};
+    Tensor newTensor{*this};
     for (int i = 0; i < row * col * dep; i++) {
         newTensor.pimpl->data[i] = pimpl->data[i] - rhs.pimpl->data[i];
     }
@@ -287,12 +287,12 @@ Tensor Tensor::operator-(const Tensor& rhs) {
     return newTensor;
 }
 
-Tensor Tensor::operator+(const Tensor& rhs) {
+Tensor Tensor::operator+(const Tensor& rhs) const {
     if (row != rhs.row || col != rhs.col || dep != rhs.dep) {
         throw(dimension_mismatch());
     }
 
-    Tensor newTensor{row, col, dep};
+    Tensor newTensor{*this};
     for (int i = 0; i < row * col * dep; i++) {
         newTensor.pimpl->data[i] = pimpl->data[i] + rhs.pimpl->data[i];
     }
@@ -300,12 +300,12 @@ Tensor Tensor::operator+(const Tensor& rhs) {
     return newTensor;
 }
 
-Tensor Tensor::operator*(const Tensor& rhs) {
+Tensor Tensor::operator*(const Tensor& rhs) const {
     if (row != rhs.row || col != rhs.col || dep != rhs.dep) {
         throw(dimension_mismatch());
     }
 
-    Tensor newTensor{row, col, dep};
+    Tensor newTensor{*this};
     for (int i = 0; i < row * col * dep; i++) {
         newTensor.pimpl->data[i] = pimpl->data[i] * rhs.pimpl->data[i];
     }
@@ -313,12 +313,12 @@ Tensor Tensor::operator*(const Tensor& rhs) {
     return newTensor;
 }
 
-Tensor Tensor::operator/(const Tensor& rhs) {
+Tensor Tensor::operator/(const Tensor& rhs) const {
     if (row != rhs.row || col != rhs.col || dep != rhs.dep) {
         throw(dimension_mismatch());
     }
 
-    Tensor newTensor{row, col, dep};
+    Tensor newTensor{*this};
     for (int i = 0; i < row * col * dep; i++) {
         newTensor.pimpl->data[i] = pimpl->data[i] / rhs.pimpl->data[i];
     }
@@ -326,8 +326,8 @@ Tensor Tensor::operator/(const Tensor& rhs) {
     return newTensor;
 }
 
-Tensor Tensor::operator+(const float& rhs) {
-    Tensor newTensor{row, col, dep};
+Tensor Tensor::operator+(const float& rhs) const {
+    Tensor newTensor{*this};
     for (int i = 0; i < row * col * dep; i++) {
         newTensor.pimpl->data[i] += rhs;
     }
@@ -335,8 +335,8 @@ Tensor Tensor::operator+(const float& rhs) {
     return newTensor;
 }
 
-Tensor Tensor::operator-(const float& rhs) {
-    Tensor newTensor{row, col, dep};
+Tensor Tensor::operator-(const float& rhs) const {
+    Tensor newTensor{*this};
     for (int i = 0; i < row * col * dep; i++) {
         newTensor.pimpl->data[i] -= rhs;
     }
@@ -344,8 +344,8 @@ Tensor Tensor::operator-(const float& rhs) {
     return newTensor;
 }
 
-Tensor Tensor::operator*(const float& rhs) {
-    Tensor newTensor{row, col, dep};
+Tensor Tensor::operator*(const float& rhs) const {
+    Tensor newTensor{*this};
     for (int i = 0; i < row * col * dep; i++) {
         newTensor.pimpl->data[i] *= rhs;
     }
@@ -353,8 +353,8 @@ Tensor Tensor::operator*(const float& rhs) {
     return newTensor;
 }
 
-Tensor Tensor::operator/(const float& rhs) {
-    Tensor newTensor{row, col, dep};
+Tensor Tensor::operator/(const float& rhs) const {
+    Tensor newTensor{*this};
     for (int i = 0; i < row * col * dep; i++) {
         newTensor.pimpl->data[i] /= rhs;
     }
@@ -362,7 +362,7 @@ Tensor Tensor::operator/(const float& rhs) {
     return newTensor;
 }
 
-Tensor Tensor::convolve(const Tensor& f) {
+Tensor Tensor::convolve(const Tensor& f) const {
     Tensor new_t{row, col, dep};
 
     int pad_h = (f.row - 1) / 2;
@@ -376,15 +376,15 @@ Tensor Tensor::convolve(const Tensor& f) {
     return new_t;
 }
 
-int Tensor::rows() {
+int Tensor::rows() const {
     return row;
 }
 
-int Tensor::cols() {
+int Tensor::cols() const {
     return col;
 }
 
-int Tensor::depth() {
+int Tensor::depth() const {
     return dep;
 }
 
@@ -406,7 +406,7 @@ void Tensor::init_random(float mean, float std) {
     }
 }
 
-void Tensor::showSize() {
+void Tensor::showSize() const {
     cout << this->rows() << " " << this->cols() << " " << this->depth() << endl;
 }
 
@@ -436,7 +436,7 @@ void Tensor::read_file(string filename) {
     }
 }
 
-void Tensor::write_file(string filename) {
+void Tensor::write_file(string filename) const {
     ofstream ost{filename};
 
     if (!ost) throw(unable_to_read_file());
