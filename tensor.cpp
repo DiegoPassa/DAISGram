@@ -1,3 +1,5 @@
+#include "tensor.h"
+
 #include <math.h>
 
 #include <fstream>
@@ -6,7 +8,6 @@
 #include <string>
 
 #include "dais_exc.h"
-#include "tensor.h"
 
 #define PI 3.141592654
 #define FLT_MAX 3.402823466e+38F /* max value */
@@ -123,10 +124,10 @@ ostream& operator<<(ostream& stream, const Tensor& obj) {
     for (int i = 0; i < obj.row; i++) {
         for (int j = 0; j < obj.col; j++) {
             stream << "[";
-            for (int k = 0; k < obj.dep-1; k++){
+            for (int k = 0; k < obj.dep - 1; k++) {
                 stream << obj.pimpl->matrix_p[i][j][k] << ",";
             }
-            stream << obj.pimpl->matrix_p[i][j][obj.dep-1]  << "] ";
+            stream << obj.pimpl->matrix_p[i][j][obj.dep - 1] << "] ";
         }
         stream << "\n";
     }
@@ -273,47 +274,55 @@ Tensor& Tensor::operator=(const Tensor& other) {
     return (*this);
 }
 
-Tensor Tensor::operator-(const Tensor &rhs){
-    if (row != rhs.row || col != rhs.col) {
-        throw (dimension_mismatch());
+Tensor Tensor::operator-(const Tensor& rhs) {
+    if (row != rhs.row || col != rhs.col || dep != rhs.dep) {
+        throw(dimension_mismatch());
     }
+
     Tensor newTensor{row, col, dep};
     for (int i = 0; i < row * col * dep; i++) {
         newTensor.pimpl->data[i] = pimpl->data[i] - rhs.pimpl->data[i];
     }
+
     return newTensor;
 }
 
-Tensor Tensor::operator+(const Tensor &rhs){
-    if (row != rhs.row || col != rhs.col) {
-        throw (dimension_mismatch());
+Tensor Tensor::operator+(const Tensor& rhs) {
+    if (row != rhs.row || col != rhs.col || dep != rhs.dep) {
+        throw(dimension_mismatch());
     }
+
     Tensor newTensor{row, col, dep};
     for (int i = 0; i < row * col * dep; i++) {
         newTensor.pimpl->data[i] = pimpl->data[i] + rhs.pimpl->data[i];
     }
+
     return newTensor;
 }
 
-Tensor Tensor::operator*(const Tensor &rhs){
-    if (row != rhs.row || col != rhs.col) {
-        throw (dimension_mismatch());
+Tensor Tensor::operator*(const Tensor& rhs) {
+    if (row != rhs.row || col != rhs.col || dep != rhs.dep) {
+        throw(dimension_mismatch());
     }
+
     Tensor newTensor{row, col, dep};
     for (int i = 0; i < row * col * dep; i++) {
         newTensor.pimpl->data[i] = pimpl->data[i] * rhs.pimpl->data[i];
     }
+
     return newTensor;
 }
 
-Tensor Tensor::operator/(const Tensor &rhs){
-    if (row != rhs.row || col != rhs.col) {
-        throw (dimension_mismatch());
+Tensor Tensor::operator/(const Tensor& rhs) {
+    if (row != rhs.row || col != rhs.col || dep != rhs.dep) {
+        throw(dimension_mismatch());
     }
+
     Tensor newTensor{row, col, dep};
     for (int i = 0; i < row * col * dep; i++) {
         newTensor.pimpl->data[i] = pimpl->data[i] / rhs.pimpl->data[i];
     }
+    
     return newTensor;
 }
 
@@ -365,19 +374,20 @@ void Tensor::showSize() {
     cout << this->rows() << " " << this->cols() << " " << this->depth() << endl;
 }
 
-void Tensor::write_file(string filename){
-        
+void Tensor::write_file(string filename) {
     ofstream ost{filename};
-        
-    if(!ost) throw(unable_to_read_file());
-        
-    ost <<row << "\n" << col << "\n" << dep << "\n";
+
+    if (!ost) throw(unable_to_read_file());
+
+    ost << row << "\n"
+        << col << "\n"
+        << dep << "\n";
 
     for (int i = 0; i < dep; i++)
         for (int j = 0; j < row; j++)
             for (int k = 0; k < col; k++)
                 ost << pimpl->matrix_p[j][k][i] << "\n";
-                // std::cout << "data(" << j << "," << k << "," << i << ")" << std::endl;
+    // std::cout << "data(" << j << "," << k << "," << i << ")" << std::endl;
 
     /* for(int i = 0; i < row * col * dep; i++)
             ost << pimpl->data[i] << "\n"; */
