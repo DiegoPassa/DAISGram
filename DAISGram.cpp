@@ -168,9 +168,9 @@ DAISGram DAISGram::sharpen() {
     return newImage;
 }
 
-/* DAISGram DAISGram::emboss() {
+DAISGram DAISGram::emboss() {
     Tensor filter;
-    float f[3 * 3] = { 2,-1, 0, 
+    float f[3 * 3] = {-2,-1, 0, 
                       -1, 1, 1, 
                        0, 1, 2 };
 
@@ -181,7 +181,7 @@ DAISGram DAISGram::sharpen() {
     newImage.data = data.convolve(filter);
 
     return newImage;
-} */
+}
 
 DAISGram DAISGram::edge() {
     Tensor filter;
