@@ -150,9 +150,11 @@ void Tensor::clamp(float low, float high) {
 
 void Tensor::rescale(float new_max) {
     for (int k = 0; k < dep; k++) {
+        float min = getMin(k);
+        float max = getMax(k);
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
-                pimpl->matrix_p[i][j][k] = ((pimpl->matrix_p[i][j][k] - getMin(k)) / (getMax(k) - getMin(k))) * new_max;
+                pimpl->matrix_p[i][j][k] = ((pimpl->matrix_p[i][j][k] - min) / (max - min)) * new_max;
             }
         }
     }
@@ -285,12 +287,6 @@ Tensor Tensor::convolve(const Tensor& f) const {
             }
         }
     }
-
-    for (int i = 0; i < row * col * dep; i++)
-    {
-        
-    }
-    
 
     conv.clamp(0, 255);
     conv.rescale(255);
@@ -447,12 +443,6 @@ void Tensor::read_file(string filename) {
     ifs >> dep;
 
     init(row, col, dep);
-
-    /* int i = 0;
-    while (!ifs.eof()) {
-        ifs >> pimpl->data[(i * dep) % (row * col * dep) + (i / (col * dep))];
-        i++;
-    } */
 
     for (int k = 0; k < dep; k++) {
         for (int i = 0; i < row; i++) {

@@ -53,17 +53,17 @@ int main(int, char**) {
     greenscreen = greenscreen.greenscreen(bkg, green, threshold);
     greenscreen.save_image("greenscreen.bmp"); */
     
-
+    //TEST POSITIVO
     DAISGram sharp;
     sharp.load_image("../images/dais.bmp");
     sharp = sharp.sharpen();
     sharp.save_image("../sharp.bmp");
 
-/*
+    //TEST POSITIVO
     DAISGram edge;
-    edge.load_image("../images/flower_hires.bmp");
+    edge.load_image("../images/dais.bmp");
     edge = edge.edge();
-    edge.save_image("./edge.bmp"); */
+    edge.save_image("../edge.bmp"); 
 
     //TEST POSITIVO 
     /*DAISGram equalized;
