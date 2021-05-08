@@ -155,7 +155,9 @@ DAISGram DAISGram::warhol() {
 
 DAISGram DAISGram::sharpen() {
     Tensor filter;
-    float f[3 * 3] = {0, -1, 0, -1, 5, -1, 0, -1, 0};
+    float f[3 * 3] = { 0,-1, 0, 
+                      -1, 5,-1, 
+                       0,-1, 0 };
 
     filter.init_filter(f, 3, 3);
     filter = filter.concat(filter, 2).concat(filter, 2);
@@ -163,6 +165,37 @@ DAISGram DAISGram::sharpen() {
     DAISGram newImage;
     newImage.data = data.convolve(filter);
     
+    return newImage;
+}
+
+/* DAISGram DAISGram::emboss() {
+    Tensor filter;
+    float f[3 * 3] = { 2,-1, 0, 
+                      -1, 1, 1, 
+                       0, 1, 2 };
+
+    filter.init_filter(f, 3, 3);
+    filter = filter.concat(filter, 2).concat(filter, 2);
+
+    DAISGram newImage;
+    newImage.data = data.convolve(filter);
+
+    return newImage;
+} */
+
+DAISGram DAISGram::edge() {
+    Tensor filter;
+    float f[3 * 3] = {-1,-1,-1, 
+                      -1, 8,-1,
+                      -1,-1,-1 };
+
+    filter.init_filter(f, 3, 3);
+    filter = filter.concat(filter, 2).concat(filter, 2);
+
+    DAISGram newImage;
+    newImage = grayscale();
+    newImage.data = data.convolve(filter);
+
     return newImage;
 }
 
@@ -236,18 +269,4 @@ DAISGram DAISGram::equalize() {
     }
 
     return equalized;
-}
-
-DAISGram DAISGram::edge() {
-    Tensor filter;
-    float f[3 * 3] = {-1, -1, -1, -1, 8, -1, -1, -1, -1};
-
-    filter.init_filter(f, 3, 3);
-    filter = filter.concat(filter, 2).concat(filter, 2);
-
-    DAISGram newImage;
-    newImage = grayscale();
-    newImage.data = data.convolve(filter);
-
-    return newImage;
 }

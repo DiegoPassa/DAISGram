@@ -268,7 +268,7 @@ Tensor Tensor::convolve(const Tensor& f) const {
     int pad_h = (f.row - 1) / 2;
     int pad_w = (f.col - 1) / 2;
 
-    Tensor conv = *this;
+    Tensor conv = {row, col, dep};
     Tensor padded = *this;
     padded = padded.padding(pad_h, pad_w);
 
@@ -277,9 +277,9 @@ Tensor Tensor::convolve(const Tensor& f) const {
             for (int k = 0; k < dep; k++) {
                 int result = 0;
 
-                for (int l = 0; l < f.row; l++) {
-                    for (int p = 0; p < f.col; p++) {
-                        result += padded(i + l, j + p, k) * f(l, p, k);
+                for (int i_filter = 0; i_filter < f.row; i_filter++) {
+                    for (int j_filter = 0; j_filter < f.col; j_filter++) {
+                        result += padded(i + i_filter, j + j_filter, k) * f(i_filter, j_filter, k);
                     }
                 }
 
