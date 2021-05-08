@@ -149,3 +149,16 @@ DAISGram DAISGram::blend(const DAISGram& rhs, float alpha) {
 
     return new_d;
 }
+
+DAISGram DAISGram::brighten(float bright){
+    DAISGram brightened;
+    brightened.data=data;
+    for (int i = 0; i < data.rows(); i++) 
+        for (int j = 0; j < data.cols(); j++) 
+            for (int k = 0; k < data.depth(); k++) 
+                brightened.data(i , j , k)+=bright;
+
+    brightened.data.clamp(0, 255);
+
+    return brightened;        
+}

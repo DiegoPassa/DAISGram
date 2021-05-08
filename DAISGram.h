@@ -70,7 +70,7 @@ class DAISGram{
          * @param bright the amount of bright to add (if negative the image gets darker)
          * @return returns a new DAISGram containing the modified object
          */
-        //DAISGram brighten(float bright);
+        DAISGram brighten(float bright);
 
         /**
          * Create a grayscale version of the object
