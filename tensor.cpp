@@ -137,7 +137,7 @@ ostream& operator<<(ostream& stream, const Tensor& obj) {
 }
 
 void Tensor::clamp(float low, float high) {
-    if (low > high) 
+    if (low > high)
         throw(invalid_parameter());
 
     for (int i = 0; i < row * col * dep; i++) {
@@ -259,41 +259,42 @@ Tensor Tensor::concat(const Tensor& rhs, int axis) const {
     return new_t;
 }
 
-Tensor Tensor::convolve(const Tensor &f) const{
-    if (f.col%2 == 0 || f.row%2 == 0) throw(filter_odd_dimensions());
+Tensor Tensor::convolve(const Tensor& f) const {
+    if (f.col % 2 == 0 || f.row % 2 == 0) throw(filter_odd_dimensions());
     if (dep != f.dep) throw dimension_mismatch();
 
     int pad_h = (f.row - 1) / 2;
     int pad_w = (f.col - 1) / 2;
-    
+
     Tensor conv = *this;
     Tensor padded = *this;
     padded = padded.padding(pad_h, pad_w);
 
-    // cout << f;
-    // cout << padded;
-
-    for (int i = 0; i < row; i++){
-        for (int j = 0; j < col; j++){
-            for (int k = 0; k < dep; k++){
+    for (int i = 0; i < row; i++) {
+        for (int j = 0; j < col; j++) {
+            for (int k = 0; k < dep; k++) {
                 int result = 0;
-                // cout << "Layer " << k << endl;
-                for (int l = 0; l < f.row; l++){
-                    for (int p = 0; p < f.col; p++){
-                        result+= padded(i+l, j+p, k) * f(l, p, k);
-                        cout << padded(i+l, j+p, k) << " ";
+
+                for (int l = 0; l < f.row; l++) {
+                    for (int p = 0; p < f.col; p++) {
+                        result += padded(i + l, j + p, k) * f(l, p, k);
                     }
-                    // cout << endl;
                 }
-                // cout << endl;
+
                 conv(i, j, k) = result;
             }
-        }    
+        }
     }
-    // cout << conv;
+
+    for (int i = 0; i < row * col * dep; i++)
+    {
+        
+    }
+    
+
     conv.clamp(0, 255);
     conv.rescale(255);
-    return conv;    
+    return conv;
 }
 
 Tensor& Tensor::operator=(const Tensor& other) {
@@ -401,20 +402,6 @@ Tensor Tensor::operator/(const float& rhs) const {
 
     return newTensor;
 }
-/* 
-Tensor Tensor::convolve(const Tensor& f) const {
-    Tensor new_t{row, col, dep};
-
-    int pad_h = (f.row - 1) / 2;
-    int pad_w = (f.col - 1) / 2;
-
-    Tensor this_padded = padding(pad_h, pad_w);
-
-    for (int k = 0; k < dep; k++) {
-    }
-
-    return new_t;
-} */
 
 int Tensor::rows() const {
     return row;
@@ -465,7 +452,7 @@ void Tensor::read_file(string filename) {
     while (!ifs.eof()) {
         ifs >> pimpl->data[(i * dep) % (row * col * dep) + (i / (col * dep))];
         i++;
-    } */ 
+    } */
 
     for (int k = 0; k < dep; k++) {
         for (int i = 0; i < row; i++) {
@@ -489,4 +476,14 @@ void Tensor::write_file(string filename) const {
         for (int j = 0; j < row; j++)
             for (int k = 0; k < col; k++)
                 ost << pimpl->matrix_p[j][k][i] << "\n";
+}
+
+void Tensor::init_filter(float* f, int row, int col) {
+    init(row, col, 1);
+
+    for (int i = 0; i < row; i++) {
+        for (int j = 0; j < col; j++) {
+            pimpl->matrix_p[i][j][0] = f[i * col + j];
+        }
+    }
 }

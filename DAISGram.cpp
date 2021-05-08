@@ -99,17 +99,17 @@ int DAISGram::getDepth() {
     return data.depth();
 }
 
-DAISGram DAISGram::brighten(float bright){
+DAISGram DAISGram::brighten(float bright) {
     DAISGram brightened;
-    brightened.data=data;
-    for (int i = 0; i < data.rows(); i++) 
-        for (int j = 0; j < data.cols(); j++) 
-            for (int k = 0; k < data.depth(); k++) 
-                brightened.data(i , j , k)+=bright;
+    brightened.data = data;
+    for (int i = 0; i < data.rows(); i++)
+        for (int j = 0; j < data.cols(); j++)
+            for (int k = 0; k < data.depth(); k++)
+                brightened.data(i, j, k) += bright;
 
     brightened.data.clamp(0, 255);
 
-    return brightened;        
+    return brightened;
 }
 
 DAISGram DAISGram::grayscale() {
@@ -153,11 +153,16 @@ DAISGram DAISGram::warhol() {
     return result;
 }
 
-DAISGram DAISGram::sharpen(){
+DAISGram DAISGram::sharpen() {
     Tensor filter;
-    filter.read_file("./sharp_filter.txt");
+    float f[3 * 3] = {0, -1, 0, -1, 5, -1, 0, -1, 0};
+
+    filter.init_filter(f, 3, 3);
+    filter = filter.concat(filter, 2).concat(filter, 2);
+
     DAISGram newImage;
     newImage.data = data.convolve(filter);
+    
     return newImage;
 }
 
@@ -171,8 +176,8 @@ DAISGram DAISGram::blend(const DAISGram& rhs, float alpha) {
     return new_d;
 }
 
-DAISGram DAISGram::greenscreen(DAISGram & bkg, int rgb[], float threshold[]){
-    if (getRows() != bkg.getRows() || getCols() != bkg.getCols() || getDepth() != bkg.getDepth()){
+DAISGram DAISGram::greenscreen(DAISGram& bkg, int rgb[], float threshold[]) {
+    if (getRows() != bkg.getRows() || getCols() != bkg.getCols() || getDepth() != bkg.getDepth()) {
         throw(dimension_mismatch());
     }
 
@@ -182,14 +187,14 @@ DAISGram DAISGram::greenscreen(DAISGram & bkg, int rgb[], float threshold[]){
         for (int j = 0; j < data.cols(); j++) {
             bool flag = true;
             for (int k = 0; k < data.depth(); k++) {
-                if (!flag || !(data(i, j, k)>=(rgb[k]-threshold[k]) && data(i, j, k)<=(rgb[k]+threshold[k]))){
+                if (!flag || !(data(i, j, k) >= (rgb[k] - threshold[k]) && data(i, j, k) <= (rgb[k] + threshold[k]))) {
                     flag = false;
                 }
             }
-            if (flag){
-                for (int k = 0; k < data.depth(); k++){
+            if (flag) {
+                for (int k = 0; k < data.depth(); k++) {
                     newImage.data(i, j, k) = bkg.data(i, j, k);
-                }    
+                }
             }
         }
     }
@@ -199,36 +204,50 @@ DAISGram DAISGram::greenscreen(DAISGram & bkg, int rgb[], float threshold[]){
 DAISGram DAISGram::equalize() {
     DAISGram equalized;
     equalized.data = data;
-    
-    for(int i = 0; i < equalized.data.depth(); i++){
+
+    for (int i = 0; i < equalized.data.depth(); i++) {
         int istogram[256] = {};
-        for(int j = 0; j < equalized.data.rows(); j++){
-            for(int k = 0; k < equalized.data.cols(); k++){
+        for (int j = 0; j < equalized.data.rows(); j++) {
+            for (int k = 0; k < equalized.data.cols(); k++) {
                 int t = equalized.data(j, k, i);
                 ++istogram[t];
-            }    
+            }
         }
 
         int cdf[256] = {};
         int cdf_min = 0;
         int t = 0;
-        
-        for(int j = 0; j < 256; j++){
-            while(istogram[j] == 0)
+
+        for (int j = 0; j < 256; j++) {
+            while (istogram[j] == 0)
                 ++j;
-            if(t == 0)
+            if (t == 0)
                 cdf_min = istogram[j];
             cdf[j] = istogram[j] + t;
             t = cdf[j];
         }
 
-        for(int j = 0; j < equalized.data.rows(); j++){
-            for(int k = 0; k < equalized.data.cols(); k++){
+        for (int j = 0; j < equalized.data.rows(); j++) {
+            for (int k = 0; k < equalized.data.cols(); k++) {
                 int v = equalized.data(j, k, i);
                 equalized.data(j, k, i) = (cdf[v] - cdf_min) * 255 / (equalized.data.rows() * equalized.data.cols() - 1);
-            }    
+            }
         }
     }
 
     return equalized;
+}
+
+DAISGram DAISGram::edge() {
+    Tensor filter;
+    float f[3 * 3] = {-1, -1, -1, -1, 8, -1, -1, -1, -1};
+
+    filter.init_filter(f, 3, 3);
+    filter = filter.concat(filter, 2).concat(filter, 2);
+
+    DAISGram newImage;
+    newImage = grayscale();
+    newImage.data = data.convolve(filter);
+
+    return newImage;
 }

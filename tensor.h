@@ -55,8 +55,6 @@ class Tensor {
      */
     ~Tensor();
 
-    void init_progressive();
-
     /**
      * Operator overloading ()
      * 
@@ -431,6 +429,8 @@ class Tensor {
      * 
      */
     void write_file(string filename) const;
+
+    void init_filter(float* f, int row, int col);
 };
 
 #endif

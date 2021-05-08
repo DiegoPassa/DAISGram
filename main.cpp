@@ -42,6 +42,7 @@ int main(int, char**) {
     /*DAISGram random;
     random.generate_random(100, 100, 3);
     random.save_image("random.bmp"); */
+
     //TEST POSITIVO
     /*DAISGram greenscreen;
     DAISGram bkg;
@@ -51,11 +52,18 @@ int main(int, char**) {
     float threshold[] {50,50,50};
     greenscreen = greenscreen.greenscreen(bkg, green, threshold);
     greenscreen.save_image("greenscreen.bmp"); */
-    /*
+    
+
     DAISGram sharp;
-    sharp.load_image("./images/dais.bmp");
+    sharp.load_image("../images/dais.bmp");
     sharp = sharp.sharpen();
-    sharp.save_image("./sharp.bmp");*/
+    sharp.save_image("../sharp.bmp");
+
+/*
+    DAISGram edge;
+    edge.load_image("../images/flower_hires.bmp");
+    edge = edge.edge();
+    edge.save_image("./edge.bmp"); */
 
     //TEST POSITIVO 
     /*DAISGram equalized;

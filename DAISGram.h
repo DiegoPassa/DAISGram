@@ -165,7 +165,7 @@ class DAISGram{
          *  
          * @return returns a new DAISGram containing the modified object
          */  
-        //DAISGram edge();
+        DAISGram edge();
 
         /**
          * Blend with anoter image
