@@ -266,31 +266,23 @@ Tensor Tensor::convolve(const Tensor &f) const{
     int pad_h = (f.row - 1) / 2;
     int pad_w = (f.col - 1) / 2;
     
-    Tensor conv = *this;
+    Tensor conv {row, col, dep};
     Tensor padded = *this;
     padded = padded.padding(pad_h, pad_w);
-
-    // cout << f;
-    // cout << padded;
 
     for (int i = 0; i < row; i++){
         for (int j = 0; j < col; j++){
             for (int k = 0; k < dep; k++){
                 int result = 0;
-                // cout << "Layer " << k << endl;
                 for (int l = 0; l < f.row; l++){
                     for (int p = 0; p < f.col; p++){
                         result+= padded(i+l, j+p, k) * f(l, p, k);
-                        cout << padded(i+l, j+p, k) << " ";
                     }
-                    // cout << endl;
                 }
-                // cout << endl;
                 conv(i, j, k) = result;
             }
         }    
     }
-    // cout << conv;
     conv.clamp(0, 255);
     conv.rescale(255);
     return conv;    
@@ -401,20 +393,6 @@ Tensor Tensor::operator/(const float& rhs) const {
 
     return newTensor;
 }
-/* 
-Tensor Tensor::convolve(const Tensor& f) const {
-    Tensor new_t{row, col, dep};
-
-    int pad_h = (f.row - 1) / 2;
-    int pad_w = (f.col - 1) / 2;
-
-    Tensor this_padded = padding(pad_h, pad_w);
-
-    for (int k = 0; k < dep; k++) {
-    }
-
-    return new_t;
-} */
 
 int Tensor::rows() const {
     return row;
@@ -441,7 +419,7 @@ void Tensor::init_random(float mean, float std) {
             }
         }
 
-    } else {
+    }else{
         throw(tensor_not_initialized());
     }
 }
@@ -460,12 +438,6 @@ void Tensor::read_file(string filename) {
     ifs >> dep;
 
     init(row, col, dep);
-
-    /* int i = 0;
-    while (!ifs.eof()) {
-        ifs >> pimpl->data[(i * dep) % (row * col * dep) + (i / (col * dep))];
-        i++;
-    } */ 
 
     for (int k = 0; k < dep; k++) {
         for (int i = 0; i < row; i++) {
