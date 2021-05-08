@@ -428,7 +428,7 @@ void Tensor::init_random(float mean, float std) {
             }
         }
 
-    } else {
+    }else{
         throw(tensor_not_initialized());
     }
 }
