@@ -127,7 +127,7 @@ class DAISGram{
          *  
          * @return returns a new DAISGram containing the modified object
          */
-        //DAISGram emboss();
+        DAISGram emboss();
 
         /**
          * Smooth the image
