@@ -259,6 +259,43 @@ Tensor Tensor::concat(const Tensor& rhs, int axis) const {
     return new_t;
 }
 
+Tensor Tensor::convolve(const Tensor &f) const{
+    if (f.col%2 == 0 || f.row%2 == 0) throw(filter_odd_dimensions());
+    if (dep != f.dep) throw dimension_mismatch();
+
+    int pad_h = (f.row - 1) / 2;
+    int pad_w = (f.col - 1) / 2;
+    
+    Tensor conv = *this;
+    Tensor padded = *this;
+    padded = padded.padding(pad_h, pad_w);
+
+    // cout << f;
+    // cout << padded;
+
+    for (int i = 0; i < row; i++){
+        for (int j = 0; j < col; j++){
+            for (int k = 0; k < dep; k++){
+                int result = 0;
+                // cout << "Layer " << k << endl;
+                for (int l = 0; l < f.row; l++){
+                    for (int p = 0; p < f.col; p++){
+                        result+= padded(i+l, j+p, k) * f(l, p, k);
+                        cout << padded(i+l, j+p, k) << " ";
+                    }
+                    // cout << endl;
+                }
+                // cout << endl;
+                conv(i, j, k) = result;
+            }
+        }    
+    }
+    // cout << conv;
+    conv.clamp(0, 255);
+    conv.rescale(255);
+    return conv;    
+}
+
 Tensor& Tensor::operator=(const Tensor& other) {
     if (this != &other) {
         if (pimpl) {
@@ -364,7 +401,7 @@ Tensor Tensor::operator/(const float& rhs) const {
 
     return newTensor;
 }
-
+/* 
 Tensor Tensor::convolve(const Tensor& f) const {
     Tensor new_t{row, col, dep};
 
@@ -377,7 +414,7 @@ Tensor Tensor::convolve(const Tensor& f) const {
     }
 
     return new_t;
-}
+} */
 
 int Tensor::rows() const {
     return row;
