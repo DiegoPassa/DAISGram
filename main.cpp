@@ -33,6 +33,12 @@ int main(int, char**) {
     blend = blend.blend(im_2, 0.75);
     blend.save_image("../blend.bmp"); */
 
+    //TEST POSITIVO
+    /* DAISGram bright;
+    bright.load_image("../images/dais.bmp");
+    bright = bright.brighten(20);
+    bright.save_image("../bright.bmp"); */
+
     return 0;
 }
 

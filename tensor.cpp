@@ -137,6 +137,9 @@ ostream& operator<<(ostream& stream, const Tensor& obj) {
 }
 
 void Tensor::clamp(float low, float high) {
+    if (low > high) 
+        throw(invalid_parameter());
+
     for (int i = 0; i < row * col * dep; i++) {
         if (pimpl->data[i] < low)
             pimpl->data[i] = low;
