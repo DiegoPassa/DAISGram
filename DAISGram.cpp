@@ -99,6 +99,19 @@ int DAISGram::getDepth() {
     return data.depth();
 }
 
+DAISGram DAISGram::brighten(float bright){
+    DAISGram brightened;
+    brightened.data=data;
+    for (int i = 0; i < data.rows(); i++) 
+        for (int j = 0; j < data.cols(); j++) 
+            for (int k = 0; k < data.depth(); k++) 
+                brightened.data(i , j , k)+=bright;
+
+    brightened.data.clamp(0, 255);
+
+    return brightened;        
+}
+
 DAISGram DAISGram::grayscale() {
     DAISGram gray;
     gray.data = data;
@@ -150,15 +163,27 @@ DAISGram DAISGram::blend(const DAISGram& rhs, float alpha) {
     return new_d;
 }
 
-DAISGram DAISGram::brighten(float bright){
-    DAISGram brightened;
-    brightened.data=data;
-    for (int i = 0; i < data.rows(); i++) 
-        for (int j = 0; j < data.cols(); j++) 
-            for (int k = 0; k < data.depth(); k++) 
-                brightened.data(i , j , k)+=bright;
+DAISGram DAISGram::greenscreen(DAISGram & bkg, int rgb[], float threshold[]){
+    if (getRows() != bkg.getRows() || getCols() != bkg.getCols() || getDepth() != bkg.getDepth()){
+        throw(dimension_mismatch());
+    }
 
-    brightened.data.clamp(0, 255);
-
-    return brightened;        
+    DAISGram newImage;
+    newImage.data = data;
+    for (int i = 0; i < data.rows(); i++) {
+        for (int j = 0; j < data.cols(); j++) {
+            bool flag = true;
+            for (int k = 0; k < data.depth(); k++) {
+                if (!flag || !(data(i, j, k)>=(rgb[k]-threshold[k]) && data(i, j, k)<=(rgb[k]+threshold[k]))){
+                    flag = false;
+                }
+            }
+            if (flag){
+                for (int k = 0; k < data.depth(); k++){
+                    newImage.data(i, j, k) = bkg.data(i, j, k);
+                }    
+            }
+        }
+    }
+    return newImage;
 }
