@@ -281,7 +281,7 @@ Tensor Tensor::convolve(const Tensor &f) const{
                 for (int l = 0; l < f.row; l++){
                     for (int p = 0; p < f.col; p++){
                         result+= padded(i+l, j+p, k) * f(l, p, k);
-                        // cout << padded(i+l, j+p, k) << " ";
+                        cout << padded(i+l, j+p, k) << " ";
                     }
                     // cout << endl;
                 }
@@ -292,7 +292,7 @@ Tensor Tensor::convolve(const Tensor &f) const{
     }
     // cout << conv;
     conv.clamp(0, 255);
-    conv.rescale();
+    conv.rescale(255);
     return conv;    
 }
 

@@ -110,7 +110,7 @@ class DAISGram{
          * 
          * @return returns a new DAISGram containing the modified object
          */
-        //DAISGram sharpen();
+        DAISGram sharpen();
 
         /**
          * Emboss the image

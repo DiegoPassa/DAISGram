@@ -153,6 +153,14 @@ DAISGram DAISGram::warhol() {
     return result;
 }
 
+DAISGram DAISGram::sharpen(){
+    Tensor filter;
+    filter.read_file("./sharp_filter.txt");
+    DAISGram newImage;
+    newImage.data = data.convolve(filter);
+    return newImage;
+}
+
 DAISGram DAISGram::blend(const DAISGram& rhs, float alpha) {
     if (alpha < 0 || alpha > 1)
         throw(invalid_parameter());
