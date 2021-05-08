@@ -39,19 +39,26 @@ int main(int, char**) {
     bright = bright.brighten(20);
     bright.save_image("../bright.bmp"); */
 
-/*     DAISGram random;
+    /*DAISGram random;
     random.generate_random(100, 100, 3);
     random.save_image("random.bmp"); */
 
-    DAISGram greenscreen;
+    //TEST POSITIVO
+    /*DAISGram greenscreen;
     DAISGram bkg;
     greenscreen.load_image("./images/greenscreen/gs_4.bmp");
     bkg.load_image("./images/greenscreen/gs_4_bkg.bmp");
     int green[] {230, 226, 221};
     float threshold[] {70, 70, 55};
     greenscreen = greenscreen.greenscreen(bkg, green, threshold);
-    greenscreen.save_image("greenscreen.bmp");
+    greenscreen.save_image("greenscreen.bmp");*/
 
+    //TEST POSITIVO 
+    /*DAISGram equalized;
+    equalized.load_image("./images/equalize/hill.bmp");
+    equalized = equalized.equalize();
+    equalized.save_image("./equalized.bmp");*/
+    
     return 0;
 }
 

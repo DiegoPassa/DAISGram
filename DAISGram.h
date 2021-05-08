@@ -209,7 +209,7 @@ class DAISGram{
          * 
          * @return returns a new DAISGram containing the equalized image.
          */  
-        //DAISGram equalize();
+        DAISGram equalize();
 
 
         /**

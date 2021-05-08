@@ -187,3 +187,40 @@ DAISGram DAISGram::greenscreen(DAISGram & bkg, int rgb[], float threshold[]){
     }
     return newImage;
 }
+
+DAISGram DAISGram::equalize() {
+    DAISGram equalized;
+    equalized.data = data;
+    
+    for(int i = 0; i < equalized.data.depth(); i++){
+        int istogram[256] = {};
+        for(int j = 0; j < equalized.data.rows(); j++){
+            for(int k = 0; k < equalized.data.cols(); k++){
+                int t = equalized.data(j, k, i);
+                ++istogram[t];
+            }    
+        }
+
+        int cdf[256] = {};
+        int cdf_min = 0;
+        int t = 0;
+        
+        for(int j = 0; j < 256; j++){
+            while(istogram[j] == 0)
+                ++j;
+            if(t == 0)
+                cdf_min = istogram[j];
+            cdf[j] = istogram[j] + t;
+            t = cdf[j];
+        }
+
+        for(int j = 0; j < equalized.data.rows(); j++){
+            for(int k = 0; k < equalized.data.cols(); k++){
+                int v = equalized.data(j, k, i);
+                equalized.data(j, k, i) = (cdf[v] - cdf_min) * 255 / (equalized.data.rows() * equalized.data.cols() - 1);
+            }    
+        }
+    }
+
+    return equalized;
+}
