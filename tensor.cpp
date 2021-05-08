@@ -29,6 +29,9 @@ Tensor::Tensor() {
 }
 
 void Tensor::allocate_matrix(int row, int col, int dep) {
+    if (row == 0 || col == 0 || dep == 0)
+        throw(invalid_parameter());
+
     pimpl->data = new float[row * col * dep];
     pimpl->cols_p = new float*[row * col];
     pimpl->matrix_p = new float**[row];
@@ -423,8 +426,7 @@ void Tensor::init_random(float mean, float std) {
                 }
             }
         }
-
-    }else{
+    } else {
         throw(tensor_not_initialized());
     }
 }
