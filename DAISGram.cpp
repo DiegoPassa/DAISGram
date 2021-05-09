@@ -77,7 +77,7 @@ void DAISGram::generate_random(int h, int w, int d) {
  *
  * @return returns the number of rows in the image
  */
-int DAISGram::getRows() {
+int DAISGram::getRows() const {
     return data.rows();
 }
 
@@ -86,7 +86,7 @@ int DAISGram::getRows() {
  *
  * @return returns the number of columns in the image
  */
-int DAISGram::getCols() {
+int DAISGram::getCols() const {
     return data.cols();
 }
 
@@ -95,11 +95,11 @@ int DAISGram::getCols() {
  *
  * @return returns the number of channels in the image
  */
-int DAISGram::getDepth() {
+int DAISGram::getDepth() const {
     return data.depth();
 }
 
-DAISGram DAISGram::brighten(float bright) {
+DAISGram DAISGram::brighten(float bright) const {
     DAISGram brightened;
     brightened.data = data;
     for (int i = 0; i < data.rows(); i++)
@@ -112,7 +112,7 @@ DAISGram DAISGram::brighten(float bright) {
     return brightened;
 }
 
-DAISGram DAISGram::grayscale() {
+DAISGram DAISGram::grayscale() const {
     DAISGram gray;
     gray.data = data;
     for (int i = 0; i < data.rows(); i++) {
@@ -130,7 +130,7 @@ DAISGram DAISGram::grayscale() {
     return gray;
 }
 
-DAISGram DAISGram::warhol() {
+DAISGram DAISGram::warhol() const {
     DAISGram result;
 
     Tensor red{data.subset(0, data.rows(), 0, data.cols(), 0, 1)};
@@ -153,7 +153,7 @@ DAISGram DAISGram::warhol() {
     return result;
 }
 
-DAISGram DAISGram::sharpen() {
+DAISGram DAISGram::sharpen() const {
     Tensor filter;
     float f[3 * 3] = { 0,-1, 0, 
                       -1, 5,-1, 
@@ -168,7 +168,7 @@ DAISGram DAISGram::sharpen() {
     return newImage;
 }
 
-DAISGram DAISGram::emboss() {
+DAISGram DAISGram::emboss() const {
     Tensor filter;
     float f[3 * 3] = {-2,-1, 0, 
                       -1, 1, 1, 
@@ -183,7 +183,7 @@ DAISGram DAISGram::emboss() {
     return newImage;
 }
 
-DAISGram DAISGram::edge() {
+DAISGram DAISGram::edge() const {
     Tensor filter;
     float f[3 * 3] = {-1,-1,-1, 
                       -1, 8,-1,
@@ -199,7 +199,17 @@ DAISGram DAISGram::edge() {
     return newImage;
 }
 
-DAISGram DAISGram::blend(const DAISGram& rhs, float alpha) {
+DAISGram DAISGram::smooth(int h) const {
+    float c = (float) 1 / (h * h);
+    Tensor filter{h, h, 3, c};
+
+    DAISGram newImage;
+    newImage.data = data.convolve(filter);
+
+    return newImage;
+}
+
+DAISGram DAISGram::blend(const DAISGram& rhs, float alpha) const {
     if (alpha < 0 || alpha > 1)
         throw(invalid_parameter());
 
@@ -209,7 +219,7 @@ DAISGram DAISGram::blend(const DAISGram& rhs, float alpha) {
     return new_d;
 }
 
-DAISGram DAISGram::greenscreen(DAISGram& bkg, int rgb[], float threshold[]) {
+DAISGram DAISGram::greenscreen(DAISGram& bkg, int rgb[], float threshold[]) const {
     if (getRows() != bkg.getRows() || getCols() != bkg.getCols() || getDepth() != bkg.getDepth()) {
         throw(dimension_mismatch());
     }
@@ -234,7 +244,7 @@ DAISGram DAISGram::greenscreen(DAISGram& bkg, int rgb[], float threshold[]) {
     return newImage;
 }
 
-DAISGram DAISGram::equalize() {
+DAISGram DAISGram::equalize() const {
     DAISGram equalized;
     equalized.data = data;
 
