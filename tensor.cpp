@@ -63,10 +63,12 @@ Tensor::Tensor(int r, int c, int d, float v) {
 }
 
 Tensor::~Tensor() {
-    delete[] pimpl->data;
-    delete[] pimpl->cols_p;
-    delete[] pimpl->matrix_p;
-    delete pimpl;
+    if (pimpl) {
+        delete[] pimpl->data;
+        delete[] pimpl->cols_p;
+        delete[] pimpl->matrix_p;
+        delete pimpl;
+    }
 }
 
 void Tensor::init(int r, int c, int d, float v) {

@@ -257,6 +257,13 @@ DAISGram DAISGram::equalize() const {
             }
         }
 
+        for (int i = 0; i < 256; i++)
+        {
+            cout << istogram[i] << " ";
+        }
+
+        cout << endl << endl;
+
         int cdf[256] = {};
         int cdf_min = 0;
         int t = 0;
@@ -270,6 +277,14 @@ DAISGram DAISGram::equalize() const {
             t = cdf[j];
         }
 
+        for (int i = 0; i < 256; i++)
+        {
+            cout << cdf[i] << " ";
+        }
+
+        cout << endl << cdf_min << endl;
+        
+
         for (int j = 0; j < equalized.data.rows(); j++) {
             for (int k = 0; k < equalized.data.cols(); k++) {
                 int v = equalized.data(j, k, i);
@@ -279,4 +294,8 @@ DAISGram DAISGram::equalize() const {
     }
 
     return equalized;
+}
+
+void DAISGram::save_tensor_to_file(string filename) const {
+    data.write_file(filename);
 }

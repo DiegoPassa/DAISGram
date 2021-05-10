@@ -223,6 +223,8 @@ class DAISGram{
          * @return returns a new DAISGram containing the generated image.
          */  
         void generate_random(int h, int w, int d);
+
+        void save_tensor_to_file(string filename) const;
 };
 
 #endif

@@ -13,7 +13,7 @@ all: main
 debug: OPTORDEBUG = -g -O0
 debug: main
  
-main: main.cpp tensor.o DAISGram.o libbmp.o
+main: test.cpp tensor.o DAISGram.o libbmp.o
 	$(CC) $(CFLAGS) $(OPTORDEBUG) -I. $^ -o $@
 
 tensor.o: tensor.cpp tensor.h
