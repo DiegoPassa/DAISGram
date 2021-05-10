@@ -257,13 +257,6 @@ DAISGram DAISGram::equalize() const {
             }
         }
 
-        for (int i = 0; i < 256; i++)
-        {
-            cout << istogram[i] << " ";
-        }
-
-        cout << endl << endl;
-
         int cdf[256] = {};
         int cdf_min = 0;
         int t = 0;
@@ -277,18 +270,10 @@ DAISGram DAISGram::equalize() const {
             t = cdf[j];
         }
 
-        for (int i = 0; i < 256; i++)
-        {
-            cout << cdf[i] << " ";
-        }
-
-        cout << endl << cdf_min << endl;
-        
-
         for (int j = 0; j < equalized.data.rows(); j++) {
             for (int k = 0; k < equalized.data.cols(); k++) {
                 int v = equalized.data(j, k, i);
-                equalized.data(j, k, i) = (cdf[v] - cdf_min) * 255 / (equalized.data.rows() * equalized.data.cols() - 1);
+                equalized.data(j, k, i) = (cdf[v] - cdf_min) * 255 / (equalized.data.rows() * equalized.data.cols() - cdf_min);
             }
         }
     }
