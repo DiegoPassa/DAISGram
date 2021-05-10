@@ -460,8 +460,6 @@ void Tensor::read_file(string filename) {
 void Tensor::write_file(string filename) const {
     ofstream ost{filename};
 
-    if (!ost) throw(unable_to_read_file());
-
     ost << row << "\n"
         << col << "\n"
         << dep << "\n";

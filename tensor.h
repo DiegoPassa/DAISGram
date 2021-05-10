@@ -425,8 +425,8 @@ class Tensor {
      * data(3,1,1)
      * data(3,2,1)
      * 
-     * if the file is not reachable throw unable_to_read_file()
      * 
+     * @param filename the filename where the tensor is stored
      */
     void write_file(string filename) const;
 
