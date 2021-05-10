@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <string>
-#include <math.h>
 
 #include "dais_exc.h"
 #include "libbmp.h"
@@ -338,6 +337,9 @@ DAISGram DAISGram::full_sobel() const {
             }
         }
     }
+
+    s.data.clamp(0, 255);
+    s.data.rescale(255);
 
     return s;
 }
