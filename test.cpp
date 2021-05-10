@@ -86,18 +86,31 @@ int main(int, char**) {
     equalized.save_image("../equalized.bmp"); */
 
     //TEST POSITIVO
-    /* DAISGram sobel_h, sobel_v, f_sobel;
-    sobel_h.load_image("../images/dais.bmp");
+    /*DAISGram sobel_h, sobel_v, f_sobel;
+    sobel_h.load_image("./images/dais.bmp");
     sobel_h = sobel_h.sobel();
-    sobel_h.save_image("../sobel_h.bmp");
+    sobel_h.save_image("./sobel_h.bmp");
     
-    sobel_v.load_image("../images/dais.bmp");
+    sobel_v.load_image("./images/dais.bmp");
     sobel_v = sobel_v.sobel(false);
-    sobel_v.save_image("../sobel_v.bmp");
+    sobel_v.save_image("./sobel_v.bmp");
 
-    f_sobel.load_image("../images/seba.bmp");
+    f_sobel.load_image("./images/seba.bmp");
     f_sobel = f_sobel.full_sobel();
-    f_sobel.save_image("../f_sobel.bmp"); */
+    f_sobel.save_image("./f_sobel.bmp");*/ 
+
+    /*DAISGram flipped;
+    flipped.load_image("./images/dais.bmp");
+    flipped = flipped.flip(false);
+    flipped.save_image("./flip.bmp");
+    flipped.load_image("./images/dais.bmp");
+    flipped = flipped.flip(true);
+    flipped.save_image("./flip_v.bmp");*/
+
+    /* DAISGram inverted;
+    inverted.load_image("./images/dais.bmp");
+    inverted = inverted.invert_colours();
+    inverted.save_image("./inverted.bmp");*/
 
     return 0;
 }

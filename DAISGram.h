@@ -229,6 +229,11 @@ class DAISGram{
         DAISGram sobel(bool horizontal = true) const;
 
         DAISGram full_sobel() const;
+
+        DAISGram flip(bool vertical = true) const;
+
+        DAISGram invert_colours() const;
+
 };
 
 #endif

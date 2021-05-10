@@ -343,3 +343,32 @@ DAISGram DAISGram::full_sobel() const {
 
     return s;
 }
+
+DAISGram DAISGram::flip(bool vertical) const{
+    DAISGram flipped;
+    flipped.data.init(getRows(), getCols(), getDepth());
+    for (int k = 0; k < getDepth(); k++) {
+        for (int i = 0; i < getRows(); i++) {
+            for (int j = 0; j < getCols(); j++) {
+                if(vertical)
+                    flipped.data(getRows()-i-1, j, k) = data(i, j, k);
+                else  
+                    flipped.data(i, getCols()-j-1, k)=data(i, j, k);
+            }
+        }
+    }
+    return flipped;
+}
+
+DAISGram DAISGram::invert_colours() const{
+    DAISGram inverted;
+    inverted.data = data;
+    for (int k = 0; k < getDepth(); k++) {
+        for (int i = 0; i < getRows(); i++) {
+            for (int j = 0; j < getCols(); j++) {
+                inverted.data(i, j, k) = 255 - inverted.data(i, j, k);
+            }
+        }
+    }
+    return inverted;
+}
