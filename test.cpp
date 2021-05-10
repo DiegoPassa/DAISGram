@@ -63,7 +63,7 @@ int main(int, char**) {
     /* DAISGram edge;
     edge.load_image("../images/dais.bmp");
     edge = edge.edge();
-    edge.save_image("../edge.bmp"); */
+    edge.save_image("../edge_g.bmp"); */
 
     //TEST POSITIVO
     /* DAISGram emboss;
@@ -77,19 +77,28 @@ int main(int, char**) {
     smooth = smooth.smooth(3);
     smooth.save_image("../smooth.bmp"); */
 
-    //TEST INCERTO 
-    DAISGram equalized;
+    //TEST POSITIVO 
+    /* DAISGram equalized;
     equalized.load_image("../images/fullmoon.bmp");
     equalized.save_tensor_to_file("../fm.txt");
     //equalized = equalized.grayscale();
     equalized = equalized.equalize();
-    equalized.save_image("../equalized.bmp"); 
+    equalized.save_image("../equalized.bmp"); */
 
-    equalized.save_tensor_to_file("../a.txt");
-    DAISGram toCompare;
-    toCompare.load_image("../results/fullmoon_equalize.bmp");
-    toCompare.save_tensor_to_file("../b.txt");
+    //TEST POSITIVO
+    /* DAISGram sobel_h, sobel_v, f_sobel;
+    sobel_h.load_image("../images/dais.bmp");
+    sobel_h = sobel_h.sobel();
+    sobel_h.save_image("../sobel_h.bmp");
     
+    sobel_v.load_image("../images/dais.bmp");
+    sobel_v = sobel_v.sobel(false);
+    sobel_v.save_image("../sobel_v.bmp");
+
+    f_sobel.load_image("../images/seba.bmp");
+    f_sobel = f_sobel.full_sobel();
+    f_sobel.save_image("../f_sobel.bmp"); */
+
     return 0;
 }
 

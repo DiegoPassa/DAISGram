@@ -293,8 +293,6 @@ Tensor Tensor::convolve(const Tensor& f) const {
         }
     }
 
-    conv.clamp(0, 255);
-    conv.rescale(255);
     return conv;
 }
 

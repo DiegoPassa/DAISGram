@@ -26,4 +26,4 @@ libbmp.o: libbmp.cpp libbmp.h
 	$(CC) -c $(CFLAGS) $(OPTORDEBUG) -I. $< -o $@
 
 clean:
-	rm main *.o
+	rm main *.o *.bmp

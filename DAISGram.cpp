@@ -155,56 +155,68 @@ DAISGram DAISGram::warhol() const {
 
 DAISGram DAISGram::sharpen() const {
     Tensor filter;
-    float f[3 * 3] = { 0,-1, 0, 
-                      -1, 5,-1, 
-                       0,-1, 0 };
+    float f[3 * 3] = {0, -1, 0,
+                      -1, 5, -1,
+                      0, -1, 0};
 
     filter.init_filter(f, 3, 3);
     filter = filter.concat(filter, 2).concat(filter, 2);
 
     DAISGram newImage;
     newImage.data = data.convolve(filter);
-    
+
+    newImage.data.clamp(0, 255);
+    newImage.data.rescale(255);
+
     return newImage;
 }
 
 DAISGram DAISGram::emboss() const {
     Tensor filter;
-    float f[3 * 3] = {-2,-1, 0, 
-                      -1, 1, 1, 
-                       0, 1, 2 };
+    float f[3 * 3] = {-2, -1, 0,
+                      -1, 1, 1,
+                      0, 1, 2};
 
     filter.init_filter(f, 3, 3);
     filter = filter.concat(filter, 2).concat(filter, 2);
 
     DAISGram newImage;
     newImage.data = data.convolve(filter);
+
+    newImage.data.clamp(0, 255);
+    newImage.data.rescale(255);
 
     return newImage;
 }
 
 DAISGram DAISGram::edge() const {
     Tensor filter;
-    float f[3 * 3] = {-1,-1,-1, 
-                      -1, 8,-1,
-                      -1,-1,-1 };
+    float f[3 * 3] = {-1, -1, -1,
+                      -1, 8, -1,
+                      -1, -1, -1};
 
     filter.init_filter(f, 3, 3);
     filter = filter.concat(filter, 2).concat(filter, 2);
 
     DAISGram newImage;
     newImage = grayscale();
-    newImage.data = data.convolve(filter);
+    newImage.data = newImage.data.convolve(filter);
+
+    newImage.data.clamp(0, 255);
+    newImage.data.rescale(255);
 
     return newImage;
 }
 
 DAISGram DAISGram::smooth(int h) const {
-    float c = (float) 1 / (h * h);
+    float c = 1.f / (h * h);
     Tensor filter{h, h, 3, c};
 
     DAISGram newImage;
     newImage.data = data.convolve(filter);
+
+    newImage.data.clamp(0, 255);
+    newImage.data.rescale(255);
 
     return newImage;
 }
@@ -283,4 +295,51 @@ DAISGram DAISGram::equalize() const {
 
 void DAISGram::save_tensor_to_file(string filename) const {
     data.write_file(filename);
+}
+
+DAISGram DAISGram::sobel(bool horizontal) const {
+    Tensor filter;
+
+    if (horizontal) {
+        float f[3 * 3] = {-1, -2, -1,
+                          0, 0, 0,
+                          1, 2, 1};
+        filter.init_filter(f, 3, 3);
+    } else {
+        float f[3 * 3] = {-1, 0, 1,
+                          -2, 0, 2,
+                          -1, 0, 1};
+        filter.init_filter(f, 3, 3);
+    }
+
+    filter = filter.concat(filter, 2).concat(filter, 2);
+
+    DAISGram newImage;
+    newImage = grayscale();
+    newImage.data = newImage.data.convolve(filter);
+
+    newImage.data.clamp(0, 255);
+    newImage.data.rescale(255);
+
+    return newImage;
+}
+
+DAISGram DAISGram::full_sobel() const {
+    DAISGram sh, sv, s;
+    s.data.init(getRows(), getCols(), getDepth());
+    sh = sobel();
+    sv = sobel(false);
+
+    for (int k = 0; k < getDepth(); k++) {
+        for (int i = 0; i < getRows(); i++) {
+            for (int j = 0; j < getCols(); j++) {
+                s.data(i, j, k) = sqrtf(sh.data(i, j, k) * sh.data(i, j, k) + sv.data(i, j, k) * sv.data(i, j, k));
+            }
+        }
+    }
+
+    s.data.clamp(0, 255);
+    s.data.rescale(255);
+
+    return s;
 }
