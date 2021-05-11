@@ -344,23 +344,23 @@ DAISGram DAISGram::full_sobel() const {
     return s;
 }
 
-DAISGram DAISGram::flip(bool vertical) const{
+DAISGram DAISGram::flip(bool vertical) const {
     DAISGram flipped;
     flipped.data.init(getRows(), getCols(), getDepth());
     for (int k = 0; k < getDepth(); k++) {
         for (int i = 0; i < getRows(); i++) {
             for (int j = 0; j < getCols(); j++) {
-                if(vertical)
-                    flipped.data(getRows()-i-1, j, k) = data(i, j, k);
-                else  
-                    flipped.data(i, getCols()-j-1, k)=data(i, j, k);
+                if (vertical)
+                    flipped.data(getRows() - i - 1, j, k) = data(i, j, k);
+                else
+                    flipped.data(i, getCols() - j - 1, k) = data(i, j, k);
             }
         }
     }
     return flipped;
 }
 
-DAISGram DAISGram::invert_colours() const{
+DAISGram DAISGram::invert_colours() const {
     DAISGram inverted;
     inverted.data = data;
     for (int k = 0; k < getDepth(); k++) {
@@ -371,4 +371,124 @@ DAISGram DAISGram::invert_colours() const{
         }
     }
     return inverted;
+}
+
+DAISGram DAISGram::convert_rgb_to_hsv() const {
+    DAISGram image_converted;
+    image_converted.data.init(getRows(), getCols(), getDepth());
+
+    for (int i = 0; i < getRows(); i++) {
+        for (int j = 0; j < getCols(); j++) {
+            float r = data(i, j, 0) / 255.f;
+            float g = data(i, j, 1) / 255.f;
+            float b = data(i, j, 2) / 255.f;
+
+            float max_rgb = max(r, max(g, b));
+            float min_rgb = min(r, min(g, b));
+            float diff = max_rgb - min_rgb;
+
+            //hue
+            if (max_rgb == min_rgb) {
+                image_converted.data(i, j, 0) = 0;
+            } else if (max_rgb == r) {
+                image_converted.data(i, j, 0) = fmod((60 * ((g - b) / diff) + 360), 360);
+            } else if (max_rgb == g) {
+                image_converted.data(i, j, 0) = fmod((60 * ((b - r) / diff) + 120), 360);
+            } else if (max_rgb == b) {
+                image_converted.data(i, j, 0) = fmod((60 * ((r - g) / diff) + 240), 360);
+            }
+
+            //saturation
+            if (max_rgb == 0) {
+                image_converted.data(i, j, 1) = 0;
+            } else {
+                image_converted.data(i, j, 1) = (diff / max_rgb) * 100;
+            }
+
+            //value
+            image_converted.data(i, j, 2) = max_rgb * 100;
+        }
+    }
+
+    return image_converted;
+}
+
+DAISGram DAISGram::convert_hsv_to_rgb() const {
+    DAISGram image_converted;
+    image_converted.data.init(getRows(), getCols(), getDepth());
+
+    for (int i = 0; i < getRows(); i++) {
+        for (int j = 0; j < getCols(); j++) {
+            float H = data(i, j, 0);
+            float S = data(i, j, 1);
+            float V = data(i, j, 2);
+
+            if (H > 360 || H < 0 || S > 100 || S < 0 || V > 100 || V < 0) {
+                throw(index_out_of_bound());
+            }
+
+            float s = S / 100;
+            float v = V / 100;
+            float C = s * v;
+            float X = C * (1 - abs(fmod(H / 60.0, 2) - 1));
+            float m = v - C;
+
+            float r, g, b;
+            if (H >= 0 && H < 60) {
+                r = C, g = X, b = 0;
+            } else if (H >= 60 && H < 120) {
+                r = X, g = C, b = 0;
+            } else if (H >= 120 && H < 180) {
+                r = 0, g = C, b = X;
+            } else if (H >= 180 && H < 240) {
+                r = 0, g = X, b = C;
+            } else if (H >= 240 && H < 300) {
+                r = X, g = 0, b = C;
+            } else {
+                r = C, g = 0, b = X;
+            }
+
+            image_converted.data(i, j, 0) = (r + m) * 255;
+            image_converted.data(i, j, 1) = (g + m) * 255;
+            image_converted.data(i, j, 2) = (b + m) * 255;
+        }
+    }
+
+    return image_converted;
+}
+
+DAISGram DAISGram::color_equalize() const {
+    DAISGram imageEqualized;
+    imageEqualized = convert_rgb_to_hsv();
+
+    vector<int> istogram(101, 0);
+
+    for (int j = 0; j < imageEqualized.data.rows(); j++) {
+        for (int k = 0; k < imageEqualized.data.cols(); k++) {
+            int t = imageEqualized.data(j, k, 2);
+            ++istogram[t];
+        }
+    }
+
+    vector<int> cdf(istogram.size(), 0);
+    int cdf_min = 0;
+    int t = 0;
+
+    for (size_t j = 0; j < cdf.size(); j++) {
+        while (istogram[j] == 0)
+            ++j;
+        if (t == 0)
+            cdf_min = istogram[j];
+        cdf[j] = istogram[j] + t;
+        t = cdf[j];
+    }
+
+    for (int j = 0; j < imageEqualized.data.rows(); j++) {
+        for (int k = 0; k < imageEqualized.data.cols(); k++) {
+            int v = imageEqualized.data(j, k, 2);
+            imageEqualized.data(j, k, 2) = (cdf[v] - cdf_min) * 100 / (imageEqualized.data.rows() * imageEqualized.data.cols() - cdf_min);
+        }
+    }
+
+    return imageEqualized.convert_hsv_to_rgb();
 }

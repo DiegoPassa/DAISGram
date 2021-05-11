@@ -68,6 +68,7 @@ Tensor::~Tensor() {
         delete[] pimpl->cols_p;
         delete[] pimpl->matrix_p;
         delete pimpl;
+        pimpl = nullptr;
     }
 }
 
@@ -303,6 +304,7 @@ Tensor& Tensor::operator=(const Tensor& other) {
             delete[] pimpl->cols_p;
             delete[] pimpl->matrix_p;
             delete pimpl;
+            pimpl = nullptr;
         }
 
         init(other.row, other.col, other.dep);

@@ -1,11 +1,10 @@
 #include <iostream>
 
-#include "tensor.h"
 #include "DAISGram.h"
 #include "libbmp.h"
+#include "tensor.h"
 
 int main(int, char**) {
-
     //TEST POSITIVO
     /* DAISGram andy;
     andy.load_image("../images/flower_hires.bmp");
@@ -52,7 +51,7 @@ int main(int, char**) {
     float threshold[] {100,100,50};
     greenscreen = greenscreen.greenscreen(bkg, green, threshold);
     greenscreen.save_image("../greenscreen.bmp"); */
-    
+
     //TEST POSITIVO
     /* DAISGram sharp;
     sharp.load_image("../images/flower_hires.bmp");
@@ -77,7 +76,7 @@ int main(int, char**) {
     smooth = smooth.smooth(3);
     smooth.save_image("../smooth.bmp"); */
 
-    //TEST POSITIVO 
+    //TEST POSITIVO
     /* DAISGram equalized;
     equalized.load_image("../images/fullmoon.bmp");
     equalized.save_tensor_to_file("../fm.txt");
@@ -97,24 +96,28 @@ int main(int, char**) {
 
     f_sobel.load_image("./images/seba.bmp");
     f_sobel = f_sobel.full_sobel();
-    f_sobel.save_image("./f_sobel.bmp");*/ 
+    f_sobel.save_image("./f_sobel.bmp");*/
 
-    /*DAISGram flipped;
-    flipped.load_image("./images/dais.bmp");
+    //TEST POSITIVO
+    /* DAISGram flipped;
+    flipped.load_image("../images/dais.bmp");
     flipped = flipped.flip(false);
-    flipped.save_image("./flip.bmp");
-    flipped.load_image("./images/dais.bmp");
+    flipped.save_image("../flip.bmp");
+    flipped.load_image("../images/dais.bmp");
     flipped = flipped.flip(true);
-    flipped.save_image("./flip_v.bmp");*/
+    flipped.save_image("../flip_v.bmp"); */
 
+    //TEST POSITIVO
     /* DAISGram inverted;
-    inverted.load_image("./images/dais.bmp");
+    inverted.load_image("../images/dais.bmp");
     inverted = inverted.invert_colours();
-    inverted.save_image("./inverted.bmp");*/
+    inverted.save_image("../inverted.bmp"); */
+
+    DAISGram color_equalization, b;
+    color_equalization.load_image("../images/flower_hires.bmp");
+    b = color_equalization.color_equalize();
+    color_equalization = b;
+    color_equalization.save_image("../c_eq.bmp");
 
     return 0;
 }
-
-   
-
-    

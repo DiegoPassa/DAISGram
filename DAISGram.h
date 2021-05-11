@@ -234,6 +234,11 @@ class DAISGram{
 
         DAISGram invert_colours() const;
 
+        DAISGram convert_rgb_to_hsv() const;
+
+        DAISGram convert_hsv_to_rgb() const;
+
+        DAISGram color_equalize() const;
 };
 
 #endif
