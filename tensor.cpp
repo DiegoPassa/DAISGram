@@ -275,13 +275,12 @@ Tensor Tensor::convolve(const Tensor& f) const {
     int pad_w = (f.col - 1) / 2;
 
     Tensor conv = {row, col, dep};
-    Tensor padded = *this;
-    padded = padded.padding(pad_h, pad_w);
+    Tensor padded = padding(pad_h, pad_w);
 
     for (int i = 0; i < row; i++) {
         for (int j = 0; j < col; j++) {
             for (int k = 0; k < dep; k++) {
-                int result = 0;
+                float result = 0;
 
                 for (int i_filter = 0; i_filter < f.row; i_filter++) {
                     for (int j_filter = 0; j_filter < f.col; j_filter++) {

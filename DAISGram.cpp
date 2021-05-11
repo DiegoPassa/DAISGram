@@ -274,12 +274,13 @@ DAISGram DAISGram::equalize() const {
         int t = 0;
 
         for (int j = 0; j < 256; j++) {
-            while (istogram[j] == 0 && j < 256)
-                ++j;
-            if (t == 0)
-                cdf_min = istogram[j];
-            cdf[j] = istogram[j] + t;
-            t = cdf[j];
+            if (istogram[j] != 0) {
+                if (t == 0)
+                    cdf_min = istogram[j];
+
+                cdf[j] = istogram[j] + t;
+                t = cdf[j];
+            }
         }
 
         for (int j = 0; j < equalized.data.rows(); j++) {
@@ -475,12 +476,13 @@ DAISGram DAISGram::color_equalize() const {
     int t = 0;
 
     for (size_t j = 0; j < cdf.size(); j++) {
-        while (istogram[j] == 0 && j < 256)
-            ++j;
-        if (t == 0)
-            cdf_min = istogram[j];
-        cdf[j] = istogram[j] + t;
-        t = cdf[j];
+        if (istogram[j] != 0) {
+            if (t == 0)
+                cdf_min = istogram[j];
+
+            cdf[j] = istogram[j] + t;
+            t = cdf[j];
+        }
     }
 
     for (int j = 0; j < imageEqualized.data.rows(); j++) {

@@ -71,10 +71,10 @@ int main(int, char**) {
     emboss.save_image("../emboss.bmp"); */
 
     //TEST INCERTO
-    /* DAISGram smooth;
+    DAISGram smooth;
     smooth.load_image("../images/dais.bmp");
-    smooth = smooth.smooth(3);
-    smooth.save_image("../smooth.bmp"); */
+    smooth = smooth.smooth(7);
+    smooth.save_image("../smooth.bmp");
 
     //TEST POSITIVO
     /* DAISGram equalized;
@@ -113,10 +113,11 @@ int main(int, char**) {
     inverted = inverted.invert_colours();
     inverted.save_image("../inverted.bmp"); */
 
-    DAISGram color_equalization;
+    //TEST OSITIVO
+    /* DAISGram color_equalization;
     color_equalization.load_image("../images/seba.bmp");
     color_equalization = color_equalization.equalize();
-    color_equalization.save_image("../c_eq.bmp");
+    color_equalization.save_image("../c_eq.bmp"); */
 
     return 0;
 }
