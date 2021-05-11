@@ -494,3 +494,17 @@ DAISGram DAISGram::color_equalize() const {
 
     return imageEqualized.convert_hsv_to_rgb();
 }
+
+DAISGram DAISGram::pixelate(int pixels) const{
+    DAISGram pixelated;
+    pixelated.data = data;
+
+    for (int i = 0; i < getRows(); i += pixels)
+        for (int j = 0; j < getCols(); j += pixels)
+            for (int k = 0; k < getDepth(); k++)
+                for (int pr = 0; pr < pixels && pr+i < getRows(); pr++)
+                    for (int pc = 0; pc < pixels && pc+j < getCols(); pc++)
+                        pixelated.data(pr+i, pc+j, k) = data(i, j, k);          
+    
+    return pixelated;
+}

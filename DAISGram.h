@@ -239,6 +239,8 @@ class DAISGram{
         DAISGram convert_hsv_to_rgb() const;
 
         DAISGram color_equalize() const;
+
+        DAISGram pixelate(int pixels = 8) const;
 };
 
 #endif
