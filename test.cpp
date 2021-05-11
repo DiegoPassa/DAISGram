@@ -113,10 +113,9 @@ int main(int, char**) {
     inverted = inverted.invert_colours();
     inverted.save_image("../inverted.bmp"); */
 
-    DAISGram color_equalization, b;
-    color_equalization.load_image("../images/flower_hires.bmp");
-    b = color_equalization.color_equalize();
-    color_equalization = b;
+    DAISGram color_equalization;
+    color_equalization.load_image("../images/seba.bmp");
+    color_equalization = color_equalization.equalize();
     color_equalization.save_image("../c_eq.bmp");
 
     return 0;

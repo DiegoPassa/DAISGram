@@ -261,7 +261,7 @@ DAISGram DAISGram::equalize() const {
     equalized.data = data;
 
     for (int i = 0; i < equalized.data.depth(); i++) {
-        int istogram[256] = {};
+        vector<int> istogram(256, 0);
         for (int j = 0; j < equalized.data.rows(); j++) {
             for (int k = 0; k < equalized.data.cols(); k++) {
                 int t = equalized.data(j, k, i);
@@ -269,12 +269,12 @@ DAISGram DAISGram::equalize() const {
             }
         }
 
-        int cdf[256] = {};
+        vector<int> cdf(256, 0);
         int cdf_min = 0;
         int t = 0;
 
         for (int j = 0; j < 256; j++) {
-            while (istogram[j] == 0)
+            while (istogram[j] == 0 && j < 256)
                 ++j;
             if (t == 0)
                 cdf_min = istogram[j];
@@ -475,7 +475,7 @@ DAISGram DAISGram::color_equalize() const {
     int t = 0;
 
     for (size_t j = 0; j < cdf.size(); j++) {
-        while (istogram[j] == 0)
+        while (istogram[j] == 0 && j < 256)
             ++j;
         if (t == 0)
             cdf_min = istogram[j];
