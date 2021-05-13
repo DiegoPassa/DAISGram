@@ -76,6 +76,13 @@ void Tensor::init(int r, int c, int d, float v) {
     if (r < 0 || c < 0 || d < 0)
         throw(invalid_parameter());
 
+    if (pimpl) {
+        delete[] pimpl->data;
+        delete[] pimpl->cols_p;
+        delete[] pimpl->matrix_p;
+        delete pimpl;
+    }
+
     pimpl = new Impl;
     allocate_matrix(r, c, d);
 
