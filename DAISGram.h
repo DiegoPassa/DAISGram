@@ -241,6 +241,8 @@ class DAISGram{
         DAISGram color_equalize() const;
 
         DAISGram pixelate(int pixels = 8) const;
+
+        void asciiArt(string filename) const;
 };
 
 #endif

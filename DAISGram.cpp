@@ -508,3 +508,18 @@ DAISGram DAISGram::pixelate(int pixels) const{
     
     return pixelated;
 }
+
+void DAISGram::asciiArt(string filename) const{
+    ofstream ost{filename};
+    char map[11]=" .,:;ox%#@";
+
+    DAISGram gray;
+    gray.data = data;
+    gray = gray.grayscale();
+
+    for (int i = 0; i < getRows(); i++){
+        for (int j = 0; j < getCols(); j++)
+            ost << map[(255-(int)gray.data(i, j, 0))*10/256];
+        ost << endl;
+    }
+}
