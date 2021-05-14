@@ -226,6 +226,8 @@ class DAISGram{
 
         bool operator==(const DAISGram& rhs) const;
 
+        DAISGram round() const;
+
         void save_tensor_to_file(string filename) const;
 
         DAISGram sobel(bool horizontal = true) const;

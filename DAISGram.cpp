@@ -304,6 +304,20 @@ bool DAISGram::operator==(const DAISGram& rhs) const {
     return equals;
 }
 
+DAISGram DAISGram::round() const {
+    DAISGram rounded{*this};
+
+    for (int k = 0; k < getDepth(); k++) {
+        for (int i = 0; i < getRows(); i++) {
+            for (int j = 0; j < getCols(); j++) {
+                rounded.data(i, j, k) = (int)rounded.data(i, j, k);
+            }
+        }
+    }
+
+    return rounded;
+}
+
 void DAISGram::save_tensor_to_file(string filename) const {
     data.write_file(filename);
 }

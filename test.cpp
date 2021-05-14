@@ -26,11 +26,15 @@ int main(int, char**) {
     grayscale.save_image("../grayscale.bmp"); */
 
     //TEST POSITIVO
-    /* DAISGram blend, im_2;
+    /*DAISGram blend, im_2, toCompare;
     blend.load_image("../images/blend/blend_a.bmp");
     im_2.load_image("../images/blend/blend_b.bmp");
-    blend = blend.blend(im_2, 0.75);
-    blend.save_image("../blend.bmp"); */
+    toCompare.load_image("../results/blend/blend_0.50.bmp");
+    blend = blend.blend(im_2, 0.50);
+    blend.save_image("../blend.bmp"); 
+
+    if (blend == toCompare)
+        cout << "uguali";*/
 
     //TEST POSITIVO
     /* DAISGram bright;
@@ -43,14 +47,14 @@ int main(int, char**) {
     random.save_image("random.bmp"); */
 
     //TEST POSITIVO
-    /* DAISGram greenscreen;
+    DAISGram greenscreen;
     DAISGram bkg;
     greenscreen.load_image("../images/greenscreen/gs_2.bmp");
     bkg.load_image("../images/greenscreen/gs_2_bkg.bmp");
     int green[] {144,208,49};
     float threshold[] {100,100,50};
     greenscreen = greenscreen.greenscreen(bkg, green, threshold);
-    greenscreen.save_image("../greenscreen.bmp"); */
+    greenscreen.save_image("../greenscreen.bmp"); 
 
     //TEST POSITIVO
     /* DAISGram sharp;
@@ -70,19 +74,22 @@ int main(int, char**) {
     emboss = emboss.emboss();
     emboss.save_image("../emboss.bmp"); */
 
-    //TEST INCERTO
-    DAISGram smooth;
+    //TEST POSITIVO
+    /* DAISGram smooth;
     smooth.load_image("../images/dais.bmp");
     smooth = smooth.smooth(7);
-    smooth.save_image("../smooth.bmp");
+    smooth.save_image("../smooth.bmp"); */
 
     //TEST POSITIVO
-    /* DAISGram equalized;
-    equalized.load_image("../images/fullmoon.bmp");
-    equalized.save_tensor_to_file("../fm.txt");
+    /*DAISGram equalized, toCompare;
+    equalized.load_image("../images/dais.bmp");
+    toCompare.load_image("../results/dais_equalize.bmp");
     //equalized = equalized.grayscale();
     equalized = equalized.equalize();
-    equalized.save_image("../equalized.bmp"); */
+    equalized.save_image("../equalized.bmp"); 
+
+    if (equalized == toCompare)
+        cout << "test positivo\n"; */
 
     //TEST POSITIVO
     /*DAISGram sobel_h, sobel_v, f_sobel;

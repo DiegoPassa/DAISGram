@@ -90,13 +90,6 @@ void Tensor::init(int r, int c, int d, float v) {
     if (r < 0 || c < 0 || d < 0)
         throw(invalid_parameter());
 
-    if (pimpl) {
-        delete[] pimpl->data;
-        delete[] pimpl->cols_p;
-        delete[] pimpl->matrix_p;
-        delete pimpl;
-    }
-
     pimpl = new Impl;
     allocate_matrix(r, c, d);
 
@@ -327,9 +320,16 @@ Tensor& Tensor::operator=(const Tensor& other) {
             pimpl = nullptr;
         }
 
-        init(other.row, other.col, other.dep);
-        for (int i = 0; i < row * col * dep; i++) {
-            pimpl->data[i] = other.pimpl->data[i];
+        if (!other.pimpl) {
+            pimpl = nullptr;
+            col = 0;
+            row = 0;
+            dep = 0;
+        } else {
+            init(other.row, other.col, other.dep);
+            for (int i = 0; i < row * col * dep; i++) {
+                pimpl->data[i] = other.pimpl->data[i];
+            }
         }
     }
 
@@ -487,7 +487,7 @@ void Tensor::write_file(string filename) const {
     for (int i = 0; i < dep; i++)
         for (int j = 0; j < row; j++)
             for (int k = 0; k < col; k++)
-                ost << pimpl->matrix_p[j][k][i] << "\n";
+                ost << (int) pimpl->matrix_p[j][k][i] << "\n";
 }
 
 void Tensor::init_filter(float* f, int row, int col) {
