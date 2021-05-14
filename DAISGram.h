@@ -224,6 +224,8 @@ class DAISGram{
          */  
         void generate_random(int h, int w, int d);
 
+        bool operator==(const DAISGram& rhs) const;
+
         void save_tensor_to_file(string filename) const;
 
         DAISGram sobel(bool horizontal = true) const;

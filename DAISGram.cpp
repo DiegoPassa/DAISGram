@@ -294,6 +294,16 @@ DAISGram DAISGram::equalize() const {
     return equalized;
 }
 
+bool DAISGram::operator==(const DAISGram& rhs) const {
+    bool equals = false;
+
+    if (data == rhs.data) {
+        equals = true;
+    }
+
+    return equals;
+}
+
 void DAISGram::save_tensor_to_file(string filename) const {
     data.write_file(filename);
 }
@@ -495,31 +505,31 @@ DAISGram DAISGram::color_equalize() const {
     return imageEqualized.convert_hsv_to_rgb();
 }
 
-DAISGram DAISGram::pixelate(int pixels) const{
+DAISGram DAISGram::pixelate(int pixels) const {
     DAISGram pixelated;
     pixelated.data = data;
 
     for (int i = 0; i < getRows(); i += pixels)
         for (int j = 0; j < getCols(); j += pixels)
             for (int k = 0; k < getDepth(); k++)
-                for (int pr = 0; pr < pixels && pr+i < getRows(); pr++)
-                    for (int pc = 0; pc < pixels && pc+j < getCols(); pc++)
-                        pixelated.data(pr+i, pc+j, k) = data(i, j, k);          
-    
+                for (int pr = 0; pr < pixels && pr + i < getRows(); pr++)
+                    for (int pc = 0; pc < pixels && pc + j < getCols(); pc++)
+                        pixelated.data(pr + i, pc + j, k) = data(i, j, k);
+
     return pixelated;
 }
 
-void DAISGram::asciiArt(string filename) const{
+void DAISGram::asciiArt(string filename) const {
     ofstream ost{filename};
-    char map[11]=" .,:;ox%#@";
+    char map[11] = " .,:;ox%#@";
 
     DAISGram gray;
     gray.data = data;
     gray = gray.grayscale();
 
-    for (int i = 0; i < getRows(); i++){
+    for (int i = 0; i < getRows(); i++) {
         for (int j = 0; j < getCols(); j++)
-            ost << map[(255-(int)gray.data(i, j, 0))*10/256];
+            ost << map[(255 - (int)gray.data(i, j, 0)) * 10 / 256];
         ost << endl;
     }
 }

@@ -58,6 +58,20 @@ Tensor::Tensor(const Tensor& that) {
     }
 }
 
+bool Tensor::operator==(const Tensor& rhs) const {
+    if (row != rhs.row || col != rhs.col || dep != rhs.dep)
+        throw(dimension_mismatch());
+
+    bool equals = true;
+
+    for (size_t i = 0; i < (size_t)row * col * dep && equals; i++) {
+        if (fabs(pimpl->data[i] - rhs.pimpl->data[i]) >= EPSILON)
+            equals = false;
+    }
+
+    return equals;
+}
+
 Tensor::Tensor(int r, int c, int d, float v) {
     init(r, c, d, v);
 }
