@@ -24,8 +24,8 @@ void DAISGram::load_image(string filename) {
 
     data = Tensor(h, w, 3, 0.0);
 
-    for (int i = 0; i < img.get_height(); i++) {
-        for (int j = 0; j < img.get_width(); j++) {
+    for (int i = 0; i < img.get_height(); ++i) {
+        for (int j = 0; j < img.get_width(); ++j) {
             data(i, j, 0) = (float)img.red_at(j, i);
             data(i, j, 1) = (float)img.green_at(j, i);
             data(i, j, 2) = (float)img.blue_at(j, i);
@@ -117,7 +117,7 @@ DAISGram DAISGram::grayscale() const {
     gray.data = data;
     for (int i = 0; i < data.rows(); i++) {
         for (int j = 0; j < data.cols(); j++) {
-            int media = 0;
+            float media = 0;
             for (int k = 0; k < data.depth(); k++) {
                 media += data(i, j, k);
             }
@@ -166,7 +166,7 @@ DAISGram DAISGram::sharpen() const {
     newImage.data = data.convolve(filter);
 
     newImage.data.clamp(0, 255);
-    newImage.data.rescale(255);
+    //newImage.data.rescale(255);
 
     return newImage;
 }
@@ -184,7 +184,7 @@ DAISGram DAISGram::emboss() const {
     newImage.data = data.convolve(filter);
 
     newImage.data.clamp(0, 255);
-    newImage.data.rescale(255);
+    //newImage.data.rescale(255);
 
     return newImage;
 }
@@ -203,7 +203,7 @@ DAISGram DAISGram::edge() const {
     newImage.data = newImage.data.convolve(filter);
 
     newImage.data.clamp(0, 255);
-    newImage.data.rescale(255);
+    //newImage.data.rescale(255);
 
     return newImage;
 }
@@ -216,7 +216,7 @@ DAISGram DAISGram::smooth(int h) const {
     newImage.data = data.convolve(filter);
 
     newImage.data.clamp(0, 255);
-    newImage.data.rescale(255);
+    //newImage.data.rescale(255);
 
     return newImage;
 }
@@ -344,7 +344,7 @@ DAISGram DAISGram::sobel(bool horizontal) const {
     newImage.data = newImage.data.convolve(filter);
 
     newImage.data.clamp(0, 255);
-    newImage.data.rescale(255);
+    //newImage.data.rescale(255);
 
     return newImage;
 }
@@ -364,7 +364,7 @@ DAISGram DAISGram::full_sobel() const {
     }
 
     s.data.clamp(0, 255);
-    s.data.rescale(255);
+    //s.data.rescale(255);
 
     return s;
 }

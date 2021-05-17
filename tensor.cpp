@@ -65,8 +65,9 @@ bool Tensor::operator==(const Tensor& rhs) const {
     bool equals = true;
 
     for (size_t i = 0; i < (size_t)row * col * dep && equals; i++) {
-        if (fabs(pimpl->data[i] - rhs.pimpl->data[i]) >= EPSILON)
+        if (fabs(pimpl->data[i] - rhs.pimpl->data[i]) >= EPSILON) {
             equals = false;
+        }
     }
 
     return equals;
@@ -103,7 +104,7 @@ void Tensor::init(int r, int c, int d, float v) {
 }
 
 float Tensor::getMin(int k) const {
-    float min = pimpl->data[0];
+    float min = FLT_MAX;
 
     for (int i = 0; i < row; i++) {
         for (int j = 0; j < col; j++) {
@@ -115,7 +116,7 @@ float Tensor::getMin(int k) const {
 }
 
 float Tensor::getMax(int k) const {
-    float max = pimpl->data[0];
+    float max = FLT_MIN;
 
     for (int i = 0; i < row; i++) {
         for (int j = 0; j < col; j++) {
@@ -172,6 +173,7 @@ void Tensor::rescale(float new_max) {
     for (int k = 0; k < dep; k++) {
         float min = getMin(k);
         float max = getMax(k);
+
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
                 pimpl->matrix_p[i][j][k] = ((pimpl->matrix_p[i][j][k] - min) / (max - min)) * new_max;
@@ -487,7 +489,7 @@ void Tensor::write_file(string filename) const {
     for (int i = 0; i < dep; i++)
         for (int j = 0; j < row; j++)
             for (int k = 0; k < col; k++)
-                ost << (int) pimpl->matrix_p[j][k][i] << "\n";
+                ost << pimpl->matrix_p[j][k][i] << "\n";
 }
 
 void Tensor::init_filter(float* f, int row, int col) {

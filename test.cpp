@@ -47,14 +47,14 @@ int main(int, char**) {
     random.save_image("random.bmp"); */
 
     //TEST POSITIVO
-    DAISGram greenscreen;
+    /* DAISGram greenscreen;
     DAISGram bkg;
     greenscreen.load_image("../images/greenscreen/gs_2.bmp");
     bkg.load_image("../images/greenscreen/gs_2_bkg.bmp");
     int green[] {144,208,49};
     float threshold[] {100,100,50};
     greenscreen = greenscreen.greenscreen(bkg, green, threshold);
-    greenscreen.save_image("../greenscreen.bmp"); 
+    greenscreen.save_image("../greenscreen.bmp"); */
 
     //TEST POSITIVO
     /* DAISGram sharp;
@@ -63,10 +63,11 @@ int main(int, char**) {
     sharp.save_image("../sharp.bmp"); */
 
     //TEST POSITIVO
-    /* DAISGram edge;
+     DAISGram edge;
     edge.load_image("../images/dais.bmp");
     edge = edge.edge();
-    edge.save_image("../edge_g.bmp"); */
+    edge.save_tensor_to_file("../edge_provafinale.txt");
+    edge.save_image("../edge_g.bmp"); 
 
     //TEST POSITIVO
     /* DAISGram emboss;
