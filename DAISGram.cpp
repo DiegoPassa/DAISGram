@@ -99,6 +99,16 @@ int DAISGram::getDepth() const {
     return data.depth();
 }
 
+/**
+ * Brighten the image
+ * 
+ * It sums the bright variable to all the values in the image.
+ * 
+ * Before returning the image, the corresponding tensor should be clamped in [0,255]
+ * 
+ * @param bright the amount of bright to add (if negative the image gets darker)
+ * @return returns a new DAISGram containing the modified object
+ */
 DAISGram DAISGram::brighten(float bright) const {
     DAISGram brightened;
     brightened.data = data;
@@ -112,6 +122,13 @@ DAISGram DAISGram::brighten(float bright) const {
     return brightened;
 }
 
+/**
+ * Create a grayscale version of the object
+ * 
+ * A grayscale image is produced by substituting each pixel with its average on all the channel
+ *  
+ * @return returns a new DAISGram containing the modified object
+ */
 DAISGram DAISGram::grayscale() const {
     DAISGram gray;
     gray.data = data;
@@ -130,6 +147,17 @@ DAISGram DAISGram::grayscale() const {
     return gray;
 }
 
+/**
+ * This function returns a composition of 4 different images in which the:
+ * - top left is the original image
+ * - top right is the original image in which the Red and Green channel are swapped
+ * - bottom left is the original image in which the Blue and Green channel are swapped
+ * - bottom right is the original image in which the Red and Blue channel are swapped
+ *  
+ * The output image is twice the dimensions of the original one.
+ * 
+ * @return returns a new DAISGram containing the modified object
+ */
 DAISGram DAISGram::warhol() const {
     DAISGram result;
 
@@ -153,6 +181,20 @@ DAISGram DAISGram::warhol() const {
     return result;
 }
 
+/**
+ * Sharpen the image
+ * 
+ * This function makes the image sharper by convolving it with a sharp filter
+ * 
+ * filter[3][3]
+ *    0  -1  0
+ *    -1  5 -1
+ *    0  -1  0
+ *  
+ * Before returning the image, the corresponding tensor should be clamped in [0,255]
+ * 
+ * @return returns a new DAISGram containing the modified object
+ */
 DAISGram DAISGram::sharpen() const {
     Tensor filter;
     float f[3 * 3] = {0, -1, 0,
@@ -166,11 +208,25 @@ DAISGram DAISGram::sharpen() const {
     newImage.data = data.convolve(filter);
 
     newImage.data.clamp(0, 255);
-    //newImage.data.rescale(255);
 
     return newImage;
 }
 
+/**
+ * Emboss the image
+ * 
+ * This function makes the image embossed (a light 3D effect) by convolving it with an
+ * embossing filter
+ * 
+ * filter[3][3]
+ *    -2 -1  0
+ *    -1  1  1
+ *     0  1  2
+ * 
+ * Before returning the image, the corresponding tensor should be clamped in [0,255]
+ *  
+ * @return returns a new DAISGram containing the modified object
+ */
 DAISGram DAISGram::emboss() const {
     Tensor filter;
     float f[3 * 3] = {-2, -1, 0,
@@ -184,11 +240,28 @@ DAISGram DAISGram::emboss() const {
     newImage.data = data.convolve(filter);
 
     newImage.data.clamp(0, 255);
-    //newImage.data.rescale(255);
 
     return newImage;
 }
 
+/**
+ * Edges of an image
+ * 
+ * This function extract the edges of an image by using the convolution 
+ * operator and the following filter
+ * 
+ * 
+ * filter[3][3]
+ * -1  -1  -1
+ * -1   8  -1
+ * -1  -1  -1
+ * 
+ * Remeber to convert the image to grayscale before running the convolution.
+ * 
+ * Before returning the image, the corresponding tensor should be clamped in [0,255]
+ *  
+ * @return returns a new DAISGram containing the modified object
+ */
 DAISGram DAISGram::edge() const {
     Tensor filter;
     float f[3 * 3] = {-1, -1, -1,
@@ -203,11 +276,26 @@ DAISGram DAISGram::edge() const {
     newImage.data = newImage.data.convolve(filter);
 
     newImage.data.clamp(0, 255);
-    //newImage.data.rescale(255);
 
     return newImage;
 }
 
+/**
+ * Smooth the image
+ * 
+ * This function remove the noise in an image using convolution and an average filter
+ * of size h*h:
+ * 
+ * c = 1/(h*h)
+ * 
+ * filter[3][3]
+ *    c c c
+ *    c c c
+ *    c c c
+ *  
+ * @param h the size of the filter
+ * @return returns a new DAISGram containing the modified object
+ */
 DAISGram DAISGram::smooth(int h) const {
     float c = 1.f / (h * h);
     Tensor filter{h, h, 3, c};
@@ -216,14 +304,28 @@ DAISGram DAISGram::smooth(int h) const {
     newImage.data = data.convolve(filter);
 
     newImage.data.clamp(0, 255);
-    //newImage.data.rescale(255);
 
     return newImage;
 }
 
+/**
+ * Blend with anoter image
+ * 
+ * This function generate a new DAISGram which is the composition 
+ * of the object and another DAISGram object
+ * 
+ * The composition follows this convex combination:
+ * results = alpha*this + (1-alpha)*rhs 
+ * 
+ * rhs and this obejct MUST have the same dimensions.
+ * 
+ * @param rhs The second image involved in the blending
+ * @param alpha The parameter of the convex combination  
+ * @return returns a new DAISGram containing the blending of the two images.
+ */
 DAISGram DAISGram::blend(const DAISGram& rhs, float alpha) const {
     if (alpha < 0 || alpha > 1)
-        throw(invalid_parameter());
+        throw(unknown_exception());
 
     DAISGram new_d;
     new_d.data = data * alpha + rhs.data * (1 - alpha);
@@ -231,6 +333,20 @@ DAISGram DAISGram::blend(const DAISGram& rhs, float alpha) const {
     return new_d;
 }
 
+/**
+ * Green Screen
+ * 
+ * This function substitutes a pixel with the corresponding one in a background image 
+ * if its colors are in the surrounding (+- threshold) of a given color (rgb).
+ * 
+ * (rgb - threshold) <= pixel <= (rgb + threshold)
+ * 
+ * 
+ * @param bkg The second image used as background
+ * @param rgb[] The color to substitute (rgb[0] = RED, rgb[1]=GREEN, rgb[2]=BLUE) 
+ * @param threshold[] The threshold to add/remove for each color (threshold[0] = RED, threshold[1]=GREEN, threshold[2]=BLUE) 
+ * @return returns a new DAISGram containing the result.
+ */
 DAISGram DAISGram::greenscreen(DAISGram& bkg, int rgb[], float threshold[]) const {
     if (getRows() != bkg.getRows() || getCols() != bkg.getCols() || getDepth() != bkg.getDepth()) {
         throw(dimension_mismatch());
@@ -256,12 +372,21 @@ DAISGram DAISGram::greenscreen(DAISGram& bkg, int rgb[], float threshold[]) cons
     return newImage;
 }
 
+/**
+ * Equalize
+ * 
+ * Stretch the distribution of colors of the image in order to use the full range of intesities.
+ * 
+ * See https://it.wikipedia.org/wiki/Equalizzazione_dell%27istogramma
+ * 
+ * @return returns a new DAISGram containing the equalized image.
+ */
 DAISGram DAISGram::equalize() const {
     DAISGram equalized;
     equalized.data = data;
 
     for (int i = 0; i < equalized.data.depth(); i++) {
-        vector<int> istogram(256, 0);
+        int istogram[256] = {0};
         for (int j = 0; j < equalized.data.rows(); j++) {
             for (int k = 0; k < equalized.data.cols(); k++) {
                 int t = equalized.data(j, k, i);
@@ -269,7 +394,7 @@ DAISGram DAISGram::equalize() const {
             }
         }
 
-        vector<int> cdf(256, 0);
+        int cdf[256] = {0};
         int cdf_min = 0;
         int t = 0;
 
@@ -294,6 +419,13 @@ DAISGram DAISGram::equalize() const {
     return equalized;
 }
 
+/**
+ * operatore che permette di confrontare due immagini usando l'operator == tra i relativi tensori 
+ * 
+ * @param rhs 
+ * @return true if equals
+ * @return false if not equals
+ */
 bool DAISGram::operator==(const DAISGram& rhs) const {
     bool equals = false;
 
@@ -304,6 +436,13 @@ bool DAISGram::operator==(const DAISGram& rhs) const {
     return equals;
 }
 
+/**
+ * metodo usato per fare il round dei dati del tensore dell'immagine
+ * necessario in fase di test per verificare l'effettiva correttezza 
+ * del risultato rispetto a quello datoci dal professore
+ * 
+ * @return DAISGram 
+ */
 DAISGram DAISGram::round() const {
     DAISGram rounded{*this};
 
@@ -318,10 +457,22 @@ DAISGram DAISGram::round() const {
     return rounded;
 }
 
+/**
+ * salva il tensore dell'immagine su file
+ * 
+ * @param filename 
+ */
 void DAISGram::save_tensor_to_file(string filename) const {
     data.write_file(filename);
 }
 
+/**
+ * implementazione del filtro sobel (verticale o orizzontale) 
+ * utile per il riconiscimento dei contorni
+ * 
+ * @param horizontal 
+ * @return DAISGram 
+ */
 DAISGram DAISGram::sobel(bool horizontal) const {
     Tensor filter;
 
@@ -344,11 +495,16 @@ DAISGram DAISGram::sobel(bool horizontal) const {
     newImage.data = newImage.data.convolve(filter);
 
     newImage.data.clamp(0, 255);
-    //newImage.data.rescale(255);
 
     return newImage;
 }
 
+/**
+ * implementazione completa del filtro sobel data dall'unione del sobel verticale con quello
+ * orizzontale (calcolando la norma pixel per pixel dei due)
+ * 
+ * @return DAISGram 
+ */
 DAISGram DAISGram::full_sobel() const {
     DAISGram sh, sv, s;
     s.data.init(getRows(), getCols(), getDepth());
@@ -364,11 +520,16 @@ DAISGram DAISGram::full_sobel() const {
     }
 
     s.data.clamp(0, 255);
-    //s.data.rescale(255);
 
     return s;
 }
 
+/**
+ * specchia l'immagine verticalmente o orizzontalmente
+ * 
+ * @param vertical 
+ * @return DAISGram 
+ */
 DAISGram DAISGram::flip(bool vertical) const {
     DAISGram flipped;
     flipped.data.init(getRows(), getCols(), getDepth());
@@ -385,6 +546,11 @@ DAISGram DAISGram::flip(bool vertical) const {
     return flipped;
 }
 
+/**
+ * inverte i colori dell'immagine 
+ * 
+ * @return DAISGram 
+ */
 DAISGram DAISGram::invert_colours() const {
     DAISGram inverted;
     inverted.data = data;
@@ -398,6 +564,12 @@ DAISGram DAISGram::invert_colours() const {
     return inverted;
 }
 
+/**
+ * converte l'encoding dell'immagine da RGB a HSV (hue, saturation, value)
+ * usata per equalizzare le immagini colorate
+ * 
+ * @return DAISGram 
+ */
 DAISGram DAISGram::convert_rgb_to_hsv() const {
     DAISGram image_converted;
     image_converted.data.init(getRows(), getCols(), getDepth());
@@ -438,6 +610,11 @@ DAISGram DAISGram::convert_rgb_to_hsv() const {
     return image_converted;
 }
 
+/**
+ * converte l'encoding dell'immagine da HSV a RGB
+ * 
+ * @return DAISGram 
+ */
 DAISGram DAISGram::convert_hsv_to_rgb() const {
     DAISGram image_converted;
     image_converted.data.init(getRows(), getCols(), getDepth());
@@ -482,6 +659,13 @@ DAISGram DAISGram::convert_hsv_to_rgb() const {
     return image_converted;
 }
 
+/**
+ * equalizzazione per le immagini colorate, il metodo converte l'immagine in formato HSV
+ * e esegue l'equalizzazione sul canale value e infine riconverte l'immagine in formato RGB,
+ * ciò permette una più corretta equalizzazione dei colori.
+ * 
+ * @return DAISGram 
+ */
 DAISGram DAISGram::color_equalize() const {
     DAISGram imageEqualized;
     imageEqualized = convert_rgb_to_hsv();
@@ -519,6 +703,12 @@ DAISGram DAISGram::color_equalize() const {
     return imageEqualized.convert_hsv_to_rgb();
 }
 
+/**
+ * riduce la risoluzione dell'immagine rendendola più "pixellosa"
+ * 
+ * @param pixels 
+ * @return DAISGram 
+ */
 DAISGram DAISGram::pixelate(int pixels) const {
     DAISGram pixelated;
     pixelated.data = data;
@@ -533,6 +723,11 @@ DAISGram DAISGram::pixelate(int pixels) const {
     return pixelated;
 }
 
+/**
+ * riproduce l'immagine usando caratteri ascii e la salva su un file .txt
+ * 
+ * @param filename 
+ */
 void DAISGram::asciiArt(string filename) const {
     ofstream ost{filename};
     char map[11] = " .,:;ox%#@";
@@ -543,7 +738,7 @@ void DAISGram::asciiArt(string filename) const {
 
     for (int i = 0; i < getRows(); i++) {
         for (int j = 0; j < getCols(); j++)
-            ost << map[(255 - (int)gray.data(i, j, 0)) * 10 / 256];
+            ost << map[(255 - (int)gray.data(i, j, 0)) * 10 / 256] << map[(255 - (int)gray.data(i, j, 0)) * 10 / 256];
         ost << endl;
     }
 }

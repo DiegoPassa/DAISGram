@@ -13,7 +13,7 @@
 #define PI 3.141592654
 #define FLT_MAX 3.402823466e+38F /* max value */
 #define FLT_MIN 1.175494351e-38F /* min positive value */
-#define EPSILON 0.000001f  /* the rounding precision for comparing floats */
+#define EPSILON 0.000001f        /* the rounding precision for comparing floats */
 
 using namespace std;
 
@@ -26,6 +26,16 @@ class Tensor {
     int col = 0;  // number of columns
     int dep = 0;  // tensor depth
 
+    /**
+     * metodo privato usato per allocare il tensore così da evitare ridondanza del codice
+     * l'allocazione prevede che la matrice sia flattened così da permettere una maggiore località spaziale
+     * e in'oltre l'accesso avviene tramite due altri array di pointer che puntano alla matrice permettendo di accedervi tramite 
+     * parentesi quadre e senza dover ogni volta utilizzare la formula di accesso a matrice flattened
+     * 
+     * @param row 
+     * @param col 
+     * @param dep 
+     */
     void allocate_matrix(int row, int col, int dep);
 
    public:
@@ -115,7 +125,7 @@ class Tensor {
      * 
      * @return returns true if all their entries are "floating" equal
      */
-    bool operator==(const Tensor& rhs) const;
+    bool operator==(const Tensor &rhs) const;
 
     /**
      * Operator overloading -
@@ -462,7 +472,17 @@ class Tensor {
      */
     void write_file(string filename) const;
 
-    void init_filter(float* f, int row, int col);
+    //------------------------ FUNZIONI DI UTILITY AGGIUNTIVE -------------------------------
+
+    /**
+     * funzione usata per inizializzare un tensore filtro data una matrice di float
+     * usato in daisgram per i filtri per la convolve
+     * 
+     * @param f 
+     * @param row 
+     * @param col 
+     */
+    void init_filter(float *f, int row, int col);
 };
 
 #endif

@@ -1,131 +1,154 @@
-#include <iostream>
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "DAISGram.h"
 #include "libbmp.h"
 #include "tensor.h"
 
-int main(int, char**) {
-    //TEST POSITIVO
-    /* DAISGram andy;
-    andy.load_image("../images/flower_hires.bmp");
+void show_help() {
+    printf("*** DAISGram ***\n");
+    printf("\targ 1: input file name (img1) \n");
+    printf("\targ 2: input file name (img2) \n");
+    printf("\targ 3: operazione da effettuare (gray, brighten, blend, sharp, edge, emboss, smooth, warhol, equalize, chromakey) \n");
+    printf("\targ 4: output file name\n");
+    printf("\targ 5: file da comparare con il risultato ottenuto (se non si vuole comparare nulla inserire '-'\n");
+    printf(
+        "\targ 6: Diversi significati in funzione dell'operazione:\n"
+        "\t\t- [sobel/flip] parametro  per la direzione (orizzontale o verticale)\n"
+        "\t\t- [asciiart] file .txt su cui salvare il risultato"
+        "\t\t\n");
+    printf(
+        "\targ 7: Diversi significati in funzione dell'operazione (default 3):\n"
+        "\t\t- [smooth]: kernel size \n"
+        "\t\t- [brighten]: valore bright per aumentare la luminosità \n"
+        "\t\t- [pixelate]: pixel da raggruppare"
+        "\t\t\n");
+    printf(
+        "\targ 8: Diversi significati in funzione dell'operazione (default 1.0):\n"
+        "\t\t- [blend] parametro alpha per il blending di due immagini");
+    printf("\n");
+}
 
-    andy = andy.warhol();
-    andy.save_image("../andy.bmp"); */
+int main(int argc, char* argv[]) {
+    char* fn_in_1; /* file 1 */
+    char* fn_in_2; /* file 2 */
+    char* fn_in_comp;
+    char* operation; /* operazione da eseguire */
+    char* fn_out;    /* output file */
 
-    //TEST POSITIVO
-    /* t.read_file("../tensors/t_4_30_2_progressive.txt");
+    int k_size = 3;    /* kernel size */
+    float alpha = 1.;  /* alpha della blend */
+    char* dir_or_file; /*direzione per sobel e flip o file per asciiart */
 
-    std::cout << t;
+    /* variabili di appoggio per le computazioni */
+    DAISGram b, c, img, toCompare;
 
-    t.write_file("../tensoree.txt"); */
+    if (argc < 5) {
+        show_help();
+        return 0;
+    }
 
-    //TEST POSITIVO
-    /* DAISGram grayscale;
-    grayscale.load_image("../images/dais.bmp");
-    grayscale = grayscale.grayscale();
-    grayscale.save_image("../grayscale.bmp"); */
+    fn_in_1 = argv[1];   /* file 1 */
+    fn_in_2 = argv[2];   /* file 2 */
+    operation = argv[3]; /* operazione da eseguire */
+    fn_out = argv[4];    /* output file */
+    fn_in_comp = argv[5];
+    dir_or_file = argv[6];
 
-    //TEST POSITIVO
-    /*DAISGram blend, im_2, toCompare;
-    blend.load_image("../images/blend/blend_a.bmp");
-    im_2.load_image("../images/blend/blend_b.bmp");
-    toCompare.load_image("../results/blend/blend_0.50.bmp");
-    blend = blend.blend(im_2, 0.50);
-    blend.save_image("../blend.bmp"); 
+    if (argc > 7) {
+        k_size = atoi(argv[7]);
+    }
 
-    if (blend == toCompare)
-        cout << "uguali";*/
+    if (argc > 8) {
+        alpha = atof(argv[8]);
+    }
 
-    //TEST POSITIVO
-    /* DAISGram bright;
-    bright.load_image("../images/dais.bmp");
-    bright = bright.brighten(20);
-    bright.save_image("../bright.bmp"); */
+    cout << "Prima immagine processata: " << fn_in_1 << "\n";
+    cout << "Operazione: " << operation << "\n";
+    cout << "Seconda immagine processata: " << fn_in_2 << "\n";
+    cout << "Parametri: " << k_size << ", " << alpha << "\n";
+    cout << "Immagine da confrontare: " << fn_in_comp << "\n";
+    cout << "direzione/file .txt per asciiart: " << dir_or_file << "\n";
+    cout << "File di output: " << fn_out << "\n\n";
 
-    /*DAISGram random;
-    random.generate_random(100, 100, 3);
-    random.save_image("random.bmp"); */
+    b.load_image(fn_in_1); /* leggi il file di input */
 
-    //TEST POSITIVO
-    /* DAISGram greenscreen;
-    DAISGram bkg;
-    greenscreen.load_image("../images/greenscreen/gs_2.bmp");
-    bkg.load_image("../images/greenscreen/gs_2_bkg.bmp");
-    int green[] {144,208,49};
-    float threshold[] {100,100,50};
-    greenscreen = greenscreen.greenscreen(bkg, green, threshold);
-    greenscreen.save_image("../greenscreen.bmp"); */
+    if (strcmp(operation, "brighten") == 0) {
+        img = b.brighten(k_size); /* aumenta la luminosità */
+    } else if (strcmp(operation, "blend") == 0) {
+        c.load_image(fn_in_2);
+        img = b.blend(c, alpha); /* effettua il blending di due immagini */
+    } else if (strcmp(operation, "gray") == 0) {
+        img = b.grayscale();
+    } else if (strcmp(operation, "equalize") == 0) {
+        img = b.equalize();
+    } else if (strcmp(operation, "chromakey") == 0) {
+        c.load_image(fn_in_2);
+        int r_, g_, b_;
+        float thr, thg, thb;
+        cout << "Enter green-screen parameters (int RGB[3]) and (float RGB Threshold[3])" << endl;
+        cin >> r_ >> g_ >> b_ >> thr >> thg >> thb;
+        int rgb[3] = {r_, g_, b_};
+        float th[3] = {thr, thg, thb};
+        img = b.greenscreen(c, rgb, th);
+    } else if (strcmp(operation, "sharp") == 0) {
+        img = b.sharpen();
+    } else if (strcmp(operation, "edge") == 0) {
+        img = b.edge();
+    } else if (strcmp(operation, "emboss") == 0) {
+        img = b.emboss();
+    } else if (strcmp(operation, "smooth") == 0) {
+        img = b.smooth(k_size);
+    } else if (strcmp(operation, "warhol") == 0) {
+        img = b.warhol();
+    } else if (strcmp(operation, "sobel") == 0) {
+        bool dir = true;
 
-    //TEST POSITIVO
-    /* DAISGram sharp;
-    sharp.load_image("../images/flower_hires.bmp");
-    sharp = sharp.sharpen();
-    sharp.save_image("../sharp.bmp"); */
+        if (strcmp(dir_or_file, "verticale") == 0) dir = false;
 
-    //TEST POSITIVO
-     DAISGram edge;
-    edge.load_image("../images/dais.bmp");
-    edge = edge.edge();
-    edge.save_tensor_to_file("../edge_provafinale.txt");
-    edge.save_image("../edge_g.bmp"); 
+        img = b.sobel(dir);
+    } else if (strcmp(operation, "full_sobel") == 0) {
+        img = b.full_sobel();
+    } else if (strcmp(operation, "pixelate") == 0) {
+        img = b.pixelate(k_size);
+    } else if (strcmp(operation, "color_eq") == 0) {
+        img = b.color_equalize();
+    } else if (strcmp(operation, "flip") == 0) {
+        bool dir = true;
 
-    //TEST POSITIVO
-    /* DAISGram emboss;
-    emboss.load_image("../images/flower_hires.bmp");
-    emboss = emboss.emboss();
-    emboss.save_image("../emboss.bmp"); */
+        if (strcmp(dir_or_file, "orizzontale") == 0) dir = false;
 
-    //TEST POSITIVO
-    /* DAISGram smooth;
-    smooth.load_image("../images/dais.bmp");
-    smooth = smooth.smooth(7);
-    smooth.save_image("../smooth.bmp"); */
+        img = b.flip(dir);
+    } else if (strcmp(operation, "invert_col") == 0) {
+        img = b.invert_colours();
+    } else if (strcmp(operation, "asciiart") == 0) {
+        string file = dir_or_file;
+        b.asciiArt(file);
+    } else {
+        throw(unknown_operation());
+    }
 
-    //TEST POSITIVO
-    /*DAISGram equalized, toCompare;
-    equalized.load_image("../images/dais.bmp");
-    toCompare.load_image("../results/dais_equalize.bmp");
-    //equalized = equalized.grayscale();
-    equalized = equalized.equalize();
-    equalized.save_image("../equalized.bmp"); 
+    //img.save_tensor_to_file("./img.txt");
+    //toCompare.save_tensor_to_file("./comp.txt");
 
-    if (equalized == toCompare)
-        cout << "test positivo\n"; */
+    if (strcmp(operation, "asciiart") != 0) {
+        if (strcmp(fn_in_comp, "-") != 0) {
+            try {
+                toCompare.load_image(fn_in_comp);  //immagine corretta da confrontare
+                img = img.round();
 
-    //TEST POSITIVO
-    /*DAISGram sobel_h, sobel_v, f_sobel;
-    sobel_h.load_image("./images/dais.bmp");
-    sobel_h = sobel_h.sobel();
-    sobel_h.save_image("./sobel_h.bmp");
-    
-    sobel_v.load_image("./images/dais.bmp");
-    sobel_v = sobel_v.sobel(false);
-    sobel_v.save_image("./sobel_v.bmp");
+                if (img == toCompare)
+                    cout << "--------------------------RISULTATO CORRETTO-------------------------------\n\n";
+                else
+                    cout << "---------------------------RISULTATO ERRATO--------------------------------\n\n";
+            } catch (const dimension_mismatch& e) {
+                std::cerr << "Impossibile confrontare le immagini a causa della diverse dimensione delle due." << '\n';
+            }
+        }
 
-    f_sobel.load_image("./images/seba.bmp");
-    f_sobel = f_sobel.full_sobel();
-    f_sobel.save_image("./f_sobel.bmp");*/
+        img.save_image(fn_out);
+    }
 
-    //TEST POSITIVO
-    /* DAISGram flipped;
-    flipped.load_image("../images/dais.bmp");
-    flipped = flipped.flip(false);
-    flipped.save_image("../flip.bmp");
-    flipped.load_image("../images/dais.bmp");
-    flipped = flipped.flip(true);
-    flipped.save_image("../flip_v.bmp"); */
-
-    //TEST POSITIVO
-    /* DAISGram inverted;
-    inverted.load_image("../images/dais.bmp");
-    inverted = inverted.invert_colours();
-    inverted.save_image("../inverted.bmp"); */
-
-    //TEST OSITIVO
-    /* DAISGram color_equalization;
-    color_equalization.load_image("../images/seba.bmp");
-    color_equalization = color_equalization.equalize();
-    color_equalization.save_image("../c_eq.bmp"); */
-
-    return 0;
+    return 0; /* ciao a tutti!*/
 }
