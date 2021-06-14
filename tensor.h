@@ -13,6 +13,7 @@
 #define PI 3.141592654
 #define FLT_MAX 3.402823466e+38F /* max value */
 #define FLT_MIN 1.175494351e-38F /* min positive value */
+<<<<<<< HEAD
 #define EPSILON 0.000001f        /* the rounding precision for comparing floats */
 
 using namespace std;
@@ -25,6 +26,22 @@ class Tensor {
     int row = 0;  // number of rows
     int col = 0;  // number of columns
     int dep = 0;  // tensor depth
+=======
+#define EPSILON 0.000001f  /* the rounding precision for comparing floats */
+
+
+using namespace std;
+
+class Tensor
+{
+private:
+
+    float * data = nullptr; //<-- you are free to change this data structure (don't use std::vectors or std::array)
+
+    int r = 0;  // number of rows
+    int c = 0;  // number of columns
+    int d = 0;  // tensor depth
+>>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
 
     /**
      * metodo privato usato per allocare il tensore così da evitare ridondanza del codice
@@ -109,6 +126,7 @@ class Tensor {
      * For example, given a=0.1232 and b=0.1233 they are 
      * - the same, if we consider a rounding with 1, 2 and 3 decimals 
      * - different when considering 4 decimal points. In this case b>a
+<<<<<<< HEAD
      * 
      * So, given two floating point numbers "a" and "b", how can we check their equivalence? 
      * through this formula:
@@ -126,6 +144,25 @@ class Tensor {
      * @return returns true if all their entries are "floating" equal
      */
     bool operator==(const Tensor &rhs) const;
+=======
+     * 
+     * So, given two floating point numbers "a" and "b", how can we check their equivalence? 
+     * through this formula:
+     * 
+     * a ?= b if and only if |a-b|<EPSILON
+     * 
+     * where EPSILON is fixed constant (defined at the beginning of this header file)
+     * 
+     * Two tensors A and B are the same if:
+     * A[i][j][k] == B[i][j][k] for all i,j,k 
+     * where == is the above formula.
+     * 
+     * The two tensors must have the same size otherwise throw a dimension_mismatch()
+     * 
+     * @return returns true if all their entries are "floating" equal
+     */
+    bool operator==(const Tensor& rhs) const;
+>>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
 
     /**
      * Operator overloading -
@@ -138,9 +175,19 @@ class Tensor {
      * 
      * @return returns a new Tensor containing the result of the operation
      */
+<<<<<<< HEAD
     Tensor operator-(const Tensor &rhs) const;
 
     /**
+     * Operator overloading +
+     * 
+     * It performs the point-wise sum between two Tensors.
+     * 
+     * result(i,j,k)=this(i,j,k)+rhs(i,j,k)
+=======
+    Tensor operator-(const Tensor &rhs)const;
+    
+     /**
      * Operator overloading +
      * 
      * It performs the point-wise sum between two Tensors.
@@ -151,6 +198,21 @@ class Tensor {
      * 
      * @return returns a new Tensor containing the result of the operation
     */
+    Tensor operator +(const Tensor &rhs)const;
+
+    /**
+     * Operator overloading *
+     * 
+     * It performs the point-wise product between two Tensors.
+     * 
+     * result(i,j,k)=this(i,j,k)*rhs(i,j,k)
+>>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
+     * 
+     * The two tensors must have the same size otherwise throw a dimension_mismatch()
+     * 
+     * @return returns a new Tensor containing the result of the operation
+<<<<<<< HEAD
+    */
     Tensor operator+(const Tensor &rhs) const;
 
     /**
@@ -159,11 +221,23 @@ class Tensor {
      * It performs the point-wise product between two Tensors.
      * 
      * result(i,j,k)=this(i,j,k)*rhs(i,j,k)
+=======
+     */
+    Tensor operator*(const Tensor &rhs)const;
+    
+    /**
+     * Operator overloading /
+     * 
+     * It performs the point-wise division between two Tensors.
+     * 
+     * result(i,j,k)=this(i,j,k)/rhs(i,j,k)
+>>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
      * 
      * The two tensors must have the same size otherwise throw a dimension_mismatch()
      * 
      * @return returns a new Tensor containing the result of the operation
      */
+<<<<<<< HEAD
     Tensor operator*(const Tensor &rhs) const;
 
     /**
@@ -213,6 +287,44 @@ class Tensor {
     Tensor operator*(const float &rhs) const;
 
     /**
+=======
+    Tensor operator/(const Tensor &rhs)const;
+
+    /**
+     * Operator overloading - 
+     * 
+     * It performs the point-wise difference between a Tensor and a constant
+     * 
+     * result(i,j,k)=this(i,j,k)-rhs
+     * 
+     * @return returns a new Tensor containing the result of the operation
+     */
+    Tensor operator-(const float &rhs)const;
+
+    /**
+     * Operator overloading +
+     * 
+     * It performs the point-wise sum between a Tensor and a constant
+     * 
+     * result(i,j,k)=this(i,j,k)+rhs
+     * 
+     * @return returns a new Tensor containing the result of the operation
+     */
+    Tensor operator+(const float &rhs)const;
+
+    /**
+     * Operator overloading *
+     * 
+     * It performs the point-wise product between a Tensor and a constant
+     * 
+     * result(i,j,k)=this(i,j,k)*rhs
+     * 
+     * @return returns a new Tensor containing the result of the operation
+     */
+    Tensor operator*(const float &rhs)const;
+
+    /**
+>>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
      * Operator overloading / between a Tensor and a constant
      * 
      * It performs the point-wise division between a Tensor and a constant
@@ -221,7 +333,11 @@ class Tensor {
      * 
      * @return returns a new Tensor containing the result of the operation
      */
+<<<<<<< HEAD
     Tensor operator/(const float &rhs) const;
+=======
+    Tensor operator/(const float &rhs)const;
+>>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
 
     /**
      * Operator overloading = (assignment) 
@@ -240,7 +356,11 @@ class Tensor {
      * @param mean The mean
      * @param std  Standard deviation
      */
+<<<<<<< HEAD
     void init_random(float mean = 0.0, float std = 1.0);
+=======
+    void init_random(float mean=0.0, float std=1.0);
+>>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
 
     /**
      * Constant Initialization
@@ -273,7 +393,9 @@ class Tensor {
      * 
      * where max(k) and min(k) are the maximum and minimum value in the k-th channel.
      * 
-     * new_max is the new value for the maximum
+     * new_max is the new maximum value for each channel
+     * 
+     * - if max(k) and min(k) are the same, then the entire k-th channel is set to new_max.
      * 
      * @param new_max New maximum vale
      */
@@ -290,7 +412,11 @@ class Tensor {
      * @param pad_w the width padding
      * @return the padded tensor
      */
+<<<<<<< HEAD
     Tensor padding(int pad_h, int pad_w) const;
+=======
+    Tensor padding(int pad_h, int pad_w)const;
+>>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
 
     /**
      * Subset a tensor
@@ -310,7 +436,11 @@ class Tensor {
      * @param depth_end
      * @return the subset of the original tensor
      */
+<<<<<<< HEAD
     Tensor subset(unsigned int row_start, unsigned int row_end, unsigned int col_start, unsigned int col_end, unsigned int depth_start, unsigned int depth_end) const;
+=======
+    Tensor subset(unsigned int row_start, unsigned int row_end, unsigned int col_start, unsigned int col_end, unsigned int depth_start, unsigned int depth_end)const;
+>>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
 
     /** 
      * Concatenate 
@@ -331,7 +461,12 @@ class Tensor {
      * @param axis The axis along which perform the concatenation 
      * @return a new Tensor containing the result of the concatenation
      */
+<<<<<<< HEAD
     Tensor concat(const Tensor &rhs, int axis = 0) const;
+=======
+    Tensor concat(const Tensor &rhs, int axis=0)const;
+
+>>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
 
     /** 
      * Convolution 
@@ -345,7 +480,11 @@ class Tensor {
      * @param f The filter
      * @return a new Tensor containing the result of the convolution
      */
+<<<<<<< HEAD
     Tensor convolve(const Tensor &f) const;
+=======
+    Tensor convolve(const Tensor &f)const;
+>>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
 
     /* UTILITY */
 
@@ -354,22 +493,35 @@ class Tensor {
      * 
      * @return the number of rows in the tensor
      */
+<<<<<<< HEAD
     int rows() const;
+=======
+    int rows()const;
+>>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
 
     /** 
      * Cols 
      * 
      * @return the number of columns in the tensor
      */
+<<<<<<< HEAD
     int cols() const;
+=======
+    int cols()const;
+>>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
 
     /** 
      * Depth 
      * 
      * @return the depth of the tensor
      */
+<<<<<<< HEAD
     int depth() const;
 
+=======
+    int depth()const;
+    
+>>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
     /** 
      * Get minimum 
      * 
@@ -377,7 +529,11 @@ class Tensor {
      * 
      * @return the minimum of data( , , k)
      */
+<<<<<<< HEAD
     float getMin(int k) const;
+=======
+    float getMin(int k)const;
+>>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
 
     /** 
      * Get maximum 
@@ -386,7 +542,11 @@ class Tensor {
      * 
      * @return the maximum of data( , , k)
      */
+<<<<<<< HEAD
     float getMax(int k) const;
+=======
+    float getMax(int k)const;
+>>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
 
     /** 
      * showSize
@@ -397,8 +557,13 @@ class Tensor {
      * rows" x "colums" x "depth
      * 
      */
+<<<<<<< HEAD
     void showSize() const;
 
+=======
+    void showSize()const;
+    
+>>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
     /* IOSTREAM */
 
     /**
@@ -466,6 +631,7 @@ class Tensor {
      * .
      * data(3,1,1)
      * data(3,2,1)
+<<<<<<< HEAD
      * 
      * 
      * @param filename the filename where the tensor is stored
@@ -483,6 +649,13 @@ class Tensor {
      * @param col 
      */
     void init_filter(float *f, int row, int col);
+=======
+     * 
+     * @param filename the filename where the tensor should be stored
+     */
+    void write_file(string filename);
+
+>>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
 };
 
 #endif

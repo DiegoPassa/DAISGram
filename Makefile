@@ -25,4 +25,8 @@ main_tensor: tensor.o main_tensor.cpp
 	g++ tensor.o main_tensor.cpp -o main_tensor $(FLAGS)
 
 clean:
+<<<<<<< HEAD
 	rm $(MAIN) *.o *.bmp
+=======
+	rm $(MAIN) *.o 
+>>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1

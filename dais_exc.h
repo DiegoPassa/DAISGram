@@ -54,6 +54,15 @@ struct filter_odd_dimensions{
     string msg = "The (width and height) dimensions of the filter must be odd";
     string code = "008";   
     /* Utilizzate questa eccezione se il filtro per la convoluzione NON ha dimensioni (altezza e largezza) dispari */
+<<<<<<< HEAD
+=======
+};
+
+struct unknown_exception{
+    string msg = "An error occured";
+    string code = "-1";   
+    /* Utilizzate questa eccezione per qualsiasi tipo di problema non gestito da altre eccezioni */
+>>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
 };
 
 struct unknown_exception{
