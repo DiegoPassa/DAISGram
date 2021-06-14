@@ -1,20 +1,11 @@
-<<<<<<< HEAD
 #include "DAISGram.h"
 
-=======
->>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
 #include <iostream>
 #include <string>
 
 #include "dais_exc.h"
-<<<<<<< HEAD
 #include "libbmp.h"
 #include "tensor.h"
-=======
-#include "tensor.h"
-#include "libbmp.h"
-#include "DAISGram.h"
->>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
 
 using namespace std;
 
@@ -23,11 +14,7 @@ using namespace std;
  *
  * @param filename String containing the path of the file
  */
-<<<<<<< HEAD
-void DAISGram::load_image(string filename) {
-=======
 void DAISGram::load_image(string filename){
->>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
     BmpImg img = BmpImg();
 
     img.read(filename.c_str());
@@ -37,7 +24,6 @@ void DAISGram::load_image(string filename){
 
     data = Tensor(h, w, 3, 0.0);
 
-<<<<<<< HEAD
     for (int i = 0; i < img.get_height(); ++i) {
         for (int j = 0; j < img.get_width(); ++j) {
             data(i, j, 0) = (float)img.red_at(j, i);
@@ -47,18 +33,6 @@ void DAISGram::load_image(string filename){
     }
 }
 
-=======
-    for(int i=0;i<img.get_height();i++){
-        for(int j=0;j<img.get_width();j++){ 
-            data(i,j,0) = (float) img.red_at(j,i);
-            data(i,j,1) = (float) img.green_at(j,i);    
-            data(i,j,2) = (float) img.blue_at(j,i);   
-        }                
-    }
-}
-
-
->>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
 /**
  * Save a DAISGram object to a bitmap file.
  * 
@@ -66,20 +40,13 @@ void DAISGram::load_image(string filename){
  *
  * @param filename String containing the path where to store the image.
  */
-<<<<<<< HEAD
 void DAISGram::save_image(string filename) {
     data.clamp(0, 255);
-=======
-void DAISGram::save_image(string filename){
-
-    data.clamp(0,255);
->>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
 
     BmpImg img = BmpImg(getCols(), getRows());
 
     img.init(getCols(), getRows());
 
-<<<<<<< HEAD
     for (int i = 0; i < getRows(); i++) {
         for (int j = 0; j < getCols(); j++) {
             img.set_pixel(j, i, (unsigned char)data(i, j, 0), (unsigned char)data(i, j, 1), (unsigned char)data(i, j, 2));
@@ -89,19 +56,6 @@ void DAISGram::save_image(string filename){
     img.write(filename);
 }
 
-=======
-    for(int i=0;i<getRows();i++){
-        for(int j=0;j<getCols();j++){
-            img.set_pixel(j,i,(unsigned char) data(i,j,0),(unsigned char) data(i,j,1),(unsigned char) data(i,j,2));                   
-        }                
-    }
-
-    img.write(filename);
-
-}
-
-
->>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
 /**
  * Generate Random Image
  * 
@@ -111,7 +65,6 @@ void DAISGram::save_image(string filename){
  * @param w width of the image
  * @param d number of channels
  * @return returns a new DAISGram containing the generated image.
-<<<<<<< HEAD
  */
 void DAISGram::generate_random(int h, int w, int d) {
     data = Tensor(h, w, d, 0.0);
@@ -789,11 +742,3 @@ void DAISGram::asciiArt(string filename) const {
         ost << endl;
     }
 }
-=======
- */  
-void DAISGram::generate_random(int h, int w, int d){
-    data = Tensor(h,w,d,0.0);
-    data.init_random(128,50);
-    data.rescale(255);
-}
->>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
