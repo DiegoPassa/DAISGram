@@ -411,7 +411,7 @@ DAISGram DAISGram::equalize() const {
         for (int j = 0; j < equalized.data.rows(); j++) {
             for (int k = 0; k < equalized.data.cols(); k++) {
                 int v = equalized.data(j, k, i);
-                equalized.data(j, k, i) = (cdf[v] - cdf_min) * 255 / (equalized.data.rows() * equalized.data.cols() - cdf_min);
+                equalized.data(j, k, i) = std::round((cdf[v] - cdf_min) * 255.f / (equalized.data.rows() * equalized.data.cols() - cdf_min));
             }
         }
     }

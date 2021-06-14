@@ -7,6 +7,8 @@
 #include "tensor.h"
 
 void show_help() {
+    // Esempio:
+    // ./main images/fullmoon.bmp - equalize prova.bmp results/fullmoon_equalize.bmp -
     printf("*** DAISGram ***\n");
     printf("\targ 1: input file name (img1) \n");
     printf("\targ 2: input file name (img2) \n");
