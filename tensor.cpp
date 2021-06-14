@@ -1,15 +1,3 @@
-<<<<<<< HEAD
-#include "tensor.h"
-
-#include <math.h>
-
-#include <fstream>
-#include <iostream>
-#include <random>
-#include <string>
-
-#include "dais_exc.h"
-=======
 #include <iostream>
 #include <string>
 #include <random>
@@ -18,7 +6,6 @@
 
 #include "dais_exc.h"
 #include "tensor.h"
->>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
 
 #define PI 3.141592654
 #define FLT_MAX 3.402823466e+38F /* max value */
@@ -26,7 +13,6 @@
 
 using namespace std;
 
-<<<<<<< HEAD
 /**
  * struct implementation usato per nascondere l'implementazione dei tensori
  * 
@@ -820,8 +806,6 @@ int Tensor::cols() const {
 int Tensor::depth() const {
     return dep;
 }
-=======
->>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
 
 /**
  * Random Initialization
@@ -831,7 +815,6 @@ int Tensor::depth() const {
  * @param mean The mean
  * @param std  Standard deviation
  */
-<<<<<<< HEAD
 void Tensor::init_random(float mean, float std) {
     if (pimpl) {
         std::default_random_engine generator;
@@ -965,23 +948,3 @@ void Tensor::init_filter(float* f, int row, int col) {
         }
     }
 }
-=======
-void Tensor::init_random(float mean, float std){
-    if(data){
-
-        std::default_random_engine generator;
-        std::normal_distribution<float> distribution(mean,std);
-
-        for(int i=0;i<r;i++){
-            for(int j=0;j<c;j++){
-                for(int k=0;k<d;k++){
-                    this->operator()(i,j,k)= distribution(generator);
-                }
-            }
-        }    
-
-    }else{
-        throw(tensor_not_initialized());
-    }
-}
->>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1

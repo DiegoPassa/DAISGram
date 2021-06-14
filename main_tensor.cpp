@@ -7,11 +7,7 @@ void show_help(){
     printf("*** Tensors Operations ***\n");
     printf("\targ 1: input file name (tensor1) \n");
     printf("\targ 2: input file name (tensor2) \n");
-<<<<<<< HEAD
-    printf("\targ 3: operazione da effettuare (+,-,/,*,convolve, concat)\n");
-=======
     printf("\targ 3: operazione da effettuare (+,-,d,x,convolve, concat)\n");
->>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
     printf("\targ 4: output file name\n");
     printf("\targ 5: parametro axis della concat\n");
     printf("\n");
@@ -50,21 +46,13 @@ int main (int argc, char * argv[]) {
         out=a+b; 
     }else if(strcmp(operation, "-") == 0) {
         out=a-b; 
-<<<<<<< HEAD
-    }else if(strcmp(operation, "*") == 0) {
-=======
     }else if(strcmp(operation, "x") == 0) {
->>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
         out=a*b; 
     }else if(strcmp(operation, "convolve") == 0) {
         out=a.convolve(b); 
     }else if(strcmp(operation, "concat") == 0) {
         out=a.concat(b,axis); 
-<<<<<<< HEAD
-    }else if(strcmp(operation, "/") == 0) {
-=======
     }else if(strcmp(operation, "d") == 0) {
->>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
         out=a/b; 
     }else {
         throw(unknown_operation());
@@ -73,8 +61,4 @@ int main (int argc, char * argv[]) {
     out.write_file(fn_out);
 
     return 0; /* ciao a tutti!*/
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 5994379c2e9a2fef0f3b6192386a473179f024f1
